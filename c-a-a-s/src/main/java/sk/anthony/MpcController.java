@@ -1,7 +1,6 @@
 package sk.anthony;
 
 import java.util.Date;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
@@ -13,14 +12,13 @@ import org.springframework.data.mongodb.core.query.Query;
 
 
 @Document(collection = "controllers")
-@XmlRootElement
 public class MpcController {
 	@Id
 	public String mpcid;
 	public Date created;
 	
-	public Number[] sysA;
-	public Number[] sysB;
+	public float[][] sysA;
+	public float[] sysB;
 	
 	/*
 	String sysC;
@@ -31,7 +29,7 @@ public class MpcController {
 	public MpcController(){
 	}
 	
-	public MpcController(Number[] sysA, Number[] sysB){
+	public MpcController(float[][] sysA, float[] sysB){
 		this.sysA = sysA;
 		this.sysB = sysB;
 	}

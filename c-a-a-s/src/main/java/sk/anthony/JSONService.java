@@ -8,6 +8,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
+import org.glassfish.jersey.filter.LoggingFilter;
+import org.glassfish.jersey.server.ResourceConfig;
+
 
 
 /**
@@ -15,8 +18,14 @@ import javax.ws.rs.core.MediaType;
  */
 
 @Path("/mpccontrollers")
-public class JSONService {
+public class JSONService extends ResourceConfig  {
 
+   public JSONService() 
+    {
+        register(LoggingFilter.class);
+        register(GsonMessageBodyHandler.class);
+    }
+	
     /**
      * Method handling HTTP GET requests. The returned object will be sent
      * to the client as "text/plain" media type.
