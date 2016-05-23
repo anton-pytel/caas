@@ -19,8 +19,8 @@ public class MpcController {
 	public String mpcid;
 	public Date created;
 	
-	public String sysA;
-	public String sysB;
+	public Number[] sysA;
+	public Number[] sysB;
 	
 	/*
 	String sysC;
@@ -31,7 +31,7 @@ public class MpcController {
 	public MpcController(){
 	}
 	
-	public MpcController(String sysA, String sysB){
+	public MpcController(Number[] sysA, Number[] sysB){
 		this.sysA = sysA;
 		this.sysB = sysB;
 	}
