@@ -2,8 +2,6 @@ package sk.anthony;
 
 import com.google.gson.annotations.SerializedName;
 
-import jersey.repackaged.com.google.common.collect.Table.Cell;
-
 public class TransferFcn {
 /* copied from matlab
    Data format:
@@ -41,8 +39,8 @@ public class TransferFcn {
 	    NUMDEN
 	}
 	
-	public Cell<double[], double[], double[]> sysNum; //bud toto
-	public Cell<double[], double[], double[]> sysDen; // a toto
+	public CellMatlab[][] sysNum; //bud toto
+	public CellMatlab[][] sysDen; // a toto
 	
 	public EsysType sysType; //alebo toto
 	public String sysString; // a toto
@@ -50,8 +48,8 @@ public class TransferFcn {
 	public TransferFcn(){
 	}
 	
-	public TransferFcn(Cell<double[], double[], double[]>  sysNum, 
-					   Cell<double[], double[], double[]>  sysDen,
+	public TransferFcn(CellMatlab[][]  sysNum, 
+				       CellMatlab[][]  sysDen,
 					   EsysType  	sysType,
 					   String	 	sysString){
 		this.sysNum = sysNum;

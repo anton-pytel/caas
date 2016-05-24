@@ -1,5 +1,6 @@
 package sk.anthony;
 
+import java.io.IOException;
 import java.util.Date;
 
 import org.springframework.context.ApplicationContext;
@@ -66,8 +67,16 @@ public class MpcController {
 		mongoOperation.save(e);
 	}
 
-	public void run(){
-		
+	public void runMatlab(MpcController xMC){
+		String comm = "matlab  -nodisplay -nosplash -nodesktop -r mpcjavainterface('";
+		comm = comm.concat(xMC.mpcid);
+		comm = comm.concat("')");
+		try {
+			java.lang.Runtime.getRuntime().exec(comm);
+		} catch (IOException e) {
+			e.printStackTrace();
+			storeErr(e);
+		}
 	}
 
 }
