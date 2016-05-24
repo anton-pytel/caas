@@ -10,39 +10,26 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import matlabcontrol.MatlabConnectionException;
-import matlabcontrol.MatlabInvocationException;
-import matlabcontrol.MatlabProxy;
-import matlabcontrol.MatlabProxyFactory;
-import matlabcontrol.MatlabProxyFactoryOptions;
-
 
 @Document(collection = "controllers")
 public class MpcController {
 	@Id
 	public String mpcid;
 	public Date created;
-	
-	public float[][] sysA;
-	public float[][] sysB;
-	public float[][] sysC;
-	public float[][] sysD;
-	public float inputDelay;
-	
+
+	public ControlledSystem ctlSys;
+	public ControllerParams ctlParam;
+	public CtrlComputedParam ctlCptParam;
 
 	public MpcController(){
 	}
 	
-	public MpcController(float[][] sysA, 
-						 float[][] sysB, 
-						 float[][] sysC, 
-						 float[][] sysD, 
-						 float inputDelay ){
-		this.sysA = sysA;
-		this.sysB = sysB;
-		this.sysC = sysC;
-		this.sysD = sysD;
-		this.inputDelay = inputDelay;
+	public MpcController(ControlledSystem  ctlSys,
+				  		 ControllerParams ctlParam,
+				 		 CtrlComputedParam ctlCptParam){
+		this.ctlSys = ctlSys;
+		this.ctlParam = ctlParam;
+		this.ctlCptParam = ctlCptParam;
 	}
 	
 	public void setCreated(Date xDate){
@@ -80,37 +67,7 @@ public class MpcController {
 	}
 
 	public void run(){
-		final Long MATLAB_PROXY_TIMEOUT = 200000L;
 		
-		MatlabProxyFactoryOptions options = new MatlabProxyFactoryOptions.Builder()
-	               .setHidden(false)
-	               .setUsePreviouslyControlledSession(true)
-	               .setProxyTimeout(MATLAB_PROXY_TIMEOUT)
-	               .build();
-		// setup the factory
-		//builder.setCopyPasteCallback(null);  // connects to an existing MATLAB by copy-pasting a few lines into the command window
-		//builder.setUsePreviouslyControlledSession(false); //starts a new MATLAB or connects to a previously started MATLAB without any user intervention
-		MatlabProxyFactory factory = new MatlabProxyFactory(options);
-		// get the proxy
-		MatlabProxy proxy = null;
-		try {
-			proxy = factory.getProxy();
-		} catch (MatlabConnectionException e) {
-			e.printStackTrace();
-			storeErr(e);
-			return;
-		}
-		// do stuff over the proxy
-		try {
-			proxy.eval("disp('hello world!')");
-		} catch (MatlabInvocationException e) {
-			proxy.disconnect();
-			e.printStackTrace();
-			storeErr(e);
-			
-		}
-		// disconnect the proxy
-		proxy.disconnect();
 	}
 
 }
