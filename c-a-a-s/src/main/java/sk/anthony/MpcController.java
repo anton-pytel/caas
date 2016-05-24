@@ -1,6 +1,8 @@
 package sk.anthony;
 
-import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
 import java.util.Date;
 
 import org.springframework.context.ApplicationContext;
@@ -68,15 +70,38 @@ public class MpcController {
 	}
 
 	public void runMatlab(MpcController xMC){
-		String comm = "matlab  -nodisplay -nosplash -nodesktop -r mpcjavainterface('";
+		/*String comm = "matlab -nodisplay -nosplash -nodesktop -r mpcjavainterface('";
 		comm = comm.concat(xMC.mpcid);
 		comm = comm.concat("')");
+		storeErr( new LogObj(comm));
+		*/
 		try {
-			java.lang.Runtime.getRuntime().exec(comm);
-		} catch (IOException e) {
+			Process p = new ProcessBuilder("C:\\Program Files\\MATLAB\\R2015a\\bin\\matlab.exe", 
+										   "-nodisplay", 
+										   "-nosplash",
+										   "-nodesktop",
+										   "-r mpcjavainterface('".concat(xMC.mpcid).concat("'"))
+					   .directory(new File("C:\\Users\\apytel\\matlab\\"))
+					   .start();
+			p.waitFor();
+			/*try {
+			    Thread.sleep(10000);                 //1000 milliseconds is one second.
+			} catch(InterruptedException ex) {
+			    Thread.currentThread().interrupt();
+			}*/
+			StringBuffer output = new StringBuffer();
+			BufferedReader reader = 
+                    new BufferedReader(new InputStreamReader(p.getInputStream()));
+			String line = "";			
+			while ((line = reader.readLine())!= null) {
+				output.append(line + "\n");
+			}
+			storeErr( new LogObj(xMC.mpcid + "\noutput\n" +  output));
+		} catch (Exception e) {
 			e.printStackTrace();
 			storeErr(e);
 		}
+
 	}
 
 }
