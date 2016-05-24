@@ -37,6 +37,7 @@ public class JSONService extends ResourceConfig  {
     @Consumes(MediaType.APPLICATION_JSON)
     public MpcController CreateResource(MpcController xmc) {
     	MpcController lmc = xmc.storeMC(xmc);
+    	lmc.run();
         return lmc;
     }
 
