@@ -1,9 +1,11 @@
 package sk.anthony;
 
 import java.io.BufferedReader;
-import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Date;
+
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
@@ -12,6 +14,8 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+
+import com.google.gson.Gson;
 
 
 @Document(collection = "controllers")
@@ -54,12 +58,30 @@ public class MpcController {
 	}
 	
 	public MpcController storeMC(MpcController xMC){
+		xMC = store2Mongo(xMC);
+		store2File(xMC);
+		return xMC;
+	}
+	public MpcController store2Mongo(MpcController xMC){
 		@SuppressWarnings("resource")
 		ApplicationContext ctx = new GenericXmlApplicationContext("SpringConfig.xml");
 		MongoOperations mongoOperation = (MongoOperations) ctx.getBean("mongoTemplate");
 		xMC.setCreated(new Date());
 		mongoOperation.save(xMC);
-		return xMC;
+		return xMC;		
+	}
+	
+	public void store2File(MpcController xMC){
+		PropertyFile.init(); 	
+		Gson gson = new Gson(); // convert java object to JSON format, // and returned as JSON formatted string 
+		String json = gson.toJson(xMC); 
+		try {  
+			FileWriter writer = new FileWriter(PropertyFile.prop.getProperty("matlabFS")+xMC.mpcid); 
+			writer.write(json); 
+			writer.close(); 
+		} catch (IOException e) { 
+				e.printStackTrace(); 
+		} 
 	}
 
 	public void storeErr(Object e){
@@ -70,20 +92,17 @@ public class MpcController {
 	}
 
 	public void runMatlab(MpcController xMC){
-		/*String comm = "matlab -nodisplay -nosplash -nodesktop -r mpcjavainterface('";
-		comm = comm.concat(xMC.mpcid);
-		comm = comm.concat("')");
-		storeErr( new LogObj(comm));
-		*/
+		PropertyFile.init(); 
 		try {
-			Process p = new ProcessBuilder("C:\\Program Files\\MATLAB\\R2015a\\bin\\matlab.exe", 
-										   "-nodisplay", 
-										   "-nosplash",
-										   "-nodesktop",
-										   "-r mpcjavainterface('".concat(xMC.mpcid).concat("'"))
-					   .directory(new File("C:\\Users\\apytel\\matlab\\"))
-					   .start();
-			p.waitFor();
+	        ProcessBuilder pb = new ProcessBuilder(PropertyFile.prop.getProperty("pythonBin"), 
+	        									   PropertyFile.prop.getProperty("matlabIfc"),
+								 		           xMC.mpcid
+								 		           );
+			//Map<String, String> env = pb.environment();
+	        // set environment variable u
+	        //env.put("SystemRoot", "C:\\Windows");
+			Process p = pb.start();	
+			int exitVal = p.waitFor();
 			/*try {
 			    Thread.sleep(10000);                 //1000 milliseconds is one second.
 			} catch(InterruptedException ex) {
@@ -96,7 +115,14 @@ public class MpcController {
 			while ((line = reader.readLine())!= null) {
 				output.append(line + "\n");
 			}
-			storeErr( new LogObj(xMC.mpcid + "\noutput\n" +  output));
+			StringBuffer err = new StringBuffer();
+			reader = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+			line = "";			
+			while ((line = reader.readLine())!= null) {
+				err.append(line + "\n");
+			}
+			
+			storeErr( new LogObj(xMC.mpcid + "\nExited with error code \n" +  exitVal + "\n" + output + "\n" + err));
 		} catch (Exception e) {
 			e.printStackTrace();
 			storeErr(e);
