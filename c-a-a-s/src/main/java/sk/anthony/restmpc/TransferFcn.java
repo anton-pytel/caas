@@ -1,4 +1,4 @@
-package sk.anthony;
+package sk.anthony.restmpc;
 
 import com.google.gson.annotations.SerializedName;
 

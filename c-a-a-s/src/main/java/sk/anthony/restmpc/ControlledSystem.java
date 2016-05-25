@@ -1,4 +1,4 @@
-package sk.anthony;
+package sk.anthony.restmpc;
 
 public class ControlledSystem {
    public StateSpace ss;
@@ -8,9 +8,9 @@ public class ControlledSystem {
    public double y0;
    public double x0;
    public double u0;
-   public double[][] yOutput;
-   public double[][] xState;
-   public double[][] uAction;
+   public DoubleArrayMatlab yOutput;
+   public DoubleArrayMatlab xState;
+   public DoubleArrayMatlab uAction;
    
 	public ControlledSystem(){
 	}
@@ -22,9 +22,9 @@ public class ControlledSystem {
 							double y0,
 							double x0,
 							double u0,
-							double[][] yOutput,
-							double[][] xState,
-							double[][] uAction){
+							DoubleArrayMatlab yOutput,
+							DoubleArrayMatlab xState,
+							DoubleArrayMatlab uAction){
 		this.ss = ss;
 		this.tfcn = tfcn;
 		this.inputDelay = inputDelay;

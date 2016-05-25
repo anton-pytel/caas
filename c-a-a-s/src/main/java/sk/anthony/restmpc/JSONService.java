@@ -1,4 +1,4 @@
-package sk.anthony;
+package sk.anthony.restmpc;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -36,9 +36,10 @@ public class JSONService extends ResourceConfig  {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public MpcController CreateResource(MpcController xmc) {
-    	MpcController lmc = xmc.storeMC(xmc);
-    	lmc.runMatlab(lmc);
-        return lmc;
+    	xmc = xmc.store2Mongo(xmc);
+    	xmc = xmc.runMatlab(xmc);
+    	xmc = xmc.update2Mongo(xmc);
+        return xmc;
     }
 
     @GET

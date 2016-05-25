@@ -1,6 +1,8 @@
-package sk.anthony;
+package sk.anthony.restmpc;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,32 +18,51 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
 
 
 @Document(collection = "controllers")
 public class MpcController {
+	
+	public enum EnumStatus {
+		@SerializedName("init")
+		INIT,
+		@SerializedName("computing")
+	    COMPUTING,
+	    @SerializedName("computed")
+	    COMPUTED
+	}
+	
 	@Id
 	public String mpcid;
 	public Date created;
-
+	public Date updated;
 	public ControlledSystem ctlSys;
 	public ControllerParams ctlParam;
 	public CtrlComputedParam ctlCptParam;
+	public EnumStatus state;
+	
 
 	public MpcController(){
 	}
 	
 	public MpcController(ControlledSystem  ctlSys,
 				  		 ControllerParams ctlParam,
-				 		 CtrlComputedParam ctlCptParam){
+				 		 CtrlComputedParam ctlCptParam,
+				 		 EnumStatus state){
 		this.ctlSys = ctlSys;
 		this.ctlParam = ctlParam;
 		this.ctlCptParam = ctlCptParam;
+		this.state = state;
 	}
 	
 	public void setCreated(Date xDate){
-		this.created = new Date();
+		this.created = xDate;
 	}
+	public void setUpdated(Date xDate){
+		this.updated = xDate;
+	}	
 	
     public String getmpcid() {
         return mpcid;
@@ -57,11 +78,6 @@ public class MpcController {
 		return lMC;
 	}
 	
-	public MpcController storeMC(MpcController xMC){
-		xMC = store2Mongo(xMC);
-		store2File(xMC);
-		return xMC;
-	}
 	public MpcController store2Mongo(MpcController xMC){
 		@SuppressWarnings("resource")
 		ApplicationContext ctx = new GenericXmlApplicationContext("SpringConfig.xml");
@@ -70,13 +86,21 @@ public class MpcController {
 		mongoOperation.save(xMC);
 		return xMC;		
 	}
+
+	public MpcController update2Mongo(MpcController xMC){
+		@SuppressWarnings("resource")
+		ApplicationContext ctx = new GenericXmlApplicationContext("SpringConfig.xml");
+		MongoOperations mongoOperation = (MongoOperations) ctx.getBean("mongoTemplate");
+		xMC.setUpdated(new Date());
+		mongoOperation.save(xMC);
+		return xMC;		
+	}
 	
-	public void store2File(MpcController xMC){
-		PropertyFile.init(); 	
+	public void storeFile(MpcController xMC){
+		PropertyFile.init(); 
 		Gson gson = new Gson();  
-		String json = gson.toJson(xMC); // convert java object to JSON format, 
-										// and returned as JSON formatted string
-		storeErr(new LogObj(PropertyFile.prop.getProperty("matlabFS")+xMC.mpcid));
+		// convert java object to JSON format,
+		String json = gson.toJson(xMC);  
 		try {  
 			FileWriter writer = new FileWriter(PropertyFile.prop.getProperty("matlabFS")+xMC.mpcid);
 			writer.write(json); 
@@ -86,6 +110,24 @@ public class MpcController {
 			storeErr(e);
 		} 
 	}
+	
+	public MpcController loadFile(MpcController xMC){
+		PropertyFile.init();
+		GsonBuilder builder = new GsonBuilder();
+		builder.registerTypeAdapterFactory(new MatArraysTypeAdapterFactory());
+		Gson gson = builder.create(); 
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader( new FileReader(PropertyFile.prop.getProperty("matlabFS")+xMC.mpcid));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			storeErr(e);
+		}
+		//convert the json string back to object
+		xMC = gson.fromJson(br, MpcController.class);
+		
+		return xMC;
+	}
 
 	public void storeErr(Object e){
 		@SuppressWarnings("resource")
@@ -94,7 +136,8 @@ public class MpcController {
 		mongoOperation.save(e);
 	}
 
-	public void runMatlab(MpcController xMC){
+	public MpcController runMatlab(MpcController xMC){
+		storeFile(xMC);
 		PropertyFile.init(); 
 		try {
 	        ProcessBuilder pb = new ProcessBuilder(PropertyFile.prop.getProperty("pythonBin"), 
@@ -123,7 +166,8 @@ public class MpcController {
 			e.printStackTrace();
 			storeErr(e);
 		}
-
+		xMC = loadFile(xMC);
+		return xMC;
 	}
 
 }

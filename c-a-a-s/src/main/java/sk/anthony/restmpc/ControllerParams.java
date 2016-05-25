@@ -1,19 +1,19 @@
-package sk.anthony;
+package sk.anthony.restmpc;
 
 public class ControllerParams {
 	public double predictHorizon;
 	public double qy = 1;    //vaha vystupu i<n
 	public double sy = 1;    //vaha vystupu i=n
 	public double qu = 0.01; //vaha vstupu
-    public double[] uMin;
-    public double[] uMax;
-    public double[] duMin;
-    public double[] duMax;
-    public double[] yMin;
-    public double[] yMax;
-    public double[] dyMin;
-    public double[] dyMax;  
-    public RefSignal[][] refSig;
+    public ArrayMatlab uMin;
+    public ArrayMatlab uMax;
+    public ArrayMatlab duMin;
+    public ArrayMatlab duMax;
+    public ArrayMatlab yMin;
+    public ArrayMatlab yMax;
+    public ArrayMatlab dyMin;
+    public ArrayMatlab dyMax;  
+    public RefSignal[][] refSig; //TODO: doublematlabArray?
 
   
 	public ControllerParams(){
@@ -23,14 +23,14 @@ public class ControllerParams {
 						    double qy,
 						    double sy,
 						    double qu,
-						    double[] uMin,
-						    double[] uMax,
-						    double[] duMin,
-						    double[] duMax,
-						    double[] yMin,
-						    double[] yMax,
-						    double[] dyMin,
-						    double[] dyMax,
+						    ArrayMatlab uMin,
+						    ArrayMatlab uMax,
+						    ArrayMatlab duMin,
+						    ArrayMatlab duMax,
+						    ArrayMatlab yMin,
+						    ArrayMatlab yMax,
+						    ArrayMatlab dyMin,
+						    ArrayMatlab dyMax,
 						    RefSignal[][] refSig
 						    ){
 		this.predictHorizon = predictHorizon;

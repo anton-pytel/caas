@@ -1,5 +1,9 @@
 function res=mpcJavaInterface(mpcid)
 disp(strcat('Processing controller id: ', mpcid));
-loadjson(strcat('../data-matlab/',mpcid))
-res='done';
+filename=strcat('c:\Users\apytel\Documents\study\java\caas\data-matlab\',mpcid);
+json=loadjson(filename);
+json.state='computing';
+res=json;
+savejson('',json,filename);
+%res='done';
 
