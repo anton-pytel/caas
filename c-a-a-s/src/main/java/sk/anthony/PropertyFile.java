@@ -14,7 +14,7 @@ public class PropertyFile {
 
 		try {
 
-			input = new FileInputStream("Property.File");
+			input = new FileInputStream("config.properties");
 
 			// load a properties file
 			prop.load(input);

@@ -73,14 +73,17 @@ public class MpcController {
 	
 	public void store2File(MpcController xMC){
 		PropertyFile.init(); 	
-		Gson gson = new Gson(); // convert java object to JSON format, // and returned as JSON formatted string 
-		String json = gson.toJson(xMC); 
+		Gson gson = new Gson();  
+		String json = gson.toJson(xMC); // convert java object to JSON format, 
+										// and returned as JSON formatted string
+		storeErr(new LogObj(PropertyFile.prop.getProperty("matlabFS")+xMC.mpcid));
 		try {  
-			FileWriter writer = new FileWriter(PropertyFile.prop.getProperty("matlabFS")+xMC.mpcid); 
+			FileWriter writer = new FileWriter(PropertyFile.prop.getProperty("matlabFS")+xMC.mpcid);
 			writer.write(json); 
 			writer.close(); 
 		} catch (IOException e) { 
-				e.printStackTrace(); 
+			e.printStackTrace(); 
+			storeErr(e);
 		} 
 	}
 
@@ -98,16 +101,9 @@ public class MpcController {
 	        									   PropertyFile.prop.getProperty("matlabIfc"),
 								 		           xMC.mpcid
 								 		           );
-			//Map<String, String> env = pb.environment();
-	        // set environment variable u
-	        //env.put("SystemRoot", "C:\\Windows");
 			Process p = pb.start();	
 			int exitVal = p.waitFor();
-			/*try {
-			    Thread.sleep(10000);                 //1000 milliseconds is one second.
-			} catch(InterruptedException ex) {
-			    Thread.currentThread().interrupt();
-			}*/
+
 			StringBuffer output = new StringBuffer();
 			BufferedReader reader = 
                     new BufferedReader(new InputStreamReader(p.getInputStream()));
