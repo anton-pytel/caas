@@ -9,9 +9,9 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
-public class MatArrayTypeAdapter extends TypeAdapter<DoubleArrayMatlab> {
+public class MatArrayTypeAdapter extends TypeAdapter<ArrayMatlab> {
 
-        public void write(JsonWriter out, DoubleArrayMatlab value) throws IOException {
+        public void write(JsonWriter out, ArrayMatlab value) throws IOException {
           if (value == null) {
             out.nullValue();
           } else {
@@ -20,50 +20,35 @@ public class MatArrayTypeAdapter extends TypeAdapter<DoubleArrayMatlab> {
           }
         }
 
-        public DoubleArrayMatlab read(JsonReader in) throws IOException {
+        public ArrayMatlab read(JsonReader in) throws IOException {
           if (in.peek() == JsonToken.NULL) {
             in.nextNull();
             return null;
           } else {
         	//ak je pole sprav double pole 
         	//ak je double pole, tak sprav double pole
-    	    List<Object> rows = new ArrayList<Object>();
     	    int maxlist = 0;
     	    in.beginObject();
     	    in.nextName();
-    	    in.beginArray();
-    	    do {
-        	    try {
-          	      in.beginArray();
-          	    } catch (IllegalStateException e) {
-          	    	
-          	    }
-    	    	List<Number> list = new ArrayList<Number>();
-	    	    while (in.hasNext()) {
-	    	      double instance = in.nextDouble();
-	    	      list.add(instance);
-	    	    }
-	    	    rows.add(list);
-    	        in.endArray();
-    	        if (maxlist<list.size()) {
-    	        	maxlist=list.size();
-    	        }
-    	    } while (in.hasNext());
+    	    List<Number> list = new ArrayList<Number>();
+    	    while (in.hasNext()) {
+    	      double instance = in.nextDouble();
+    	      list.add(instance);
+    	    }
     	    try {
-    	      in.endArray();
-    	    } catch (IllegalStateException e) {
-    	    	
-    	    }
+      	      in.endArray();
+      	    } catch (IllegalStateException e) {
+      	    	
+      	    }
+	        if (maxlist<list.size()) {
+	        	maxlist=list.size();
+	        }
     	    in.endObject();
-    	    double[][] array = new double[rows.size()][maxlist];
-    	    for (int i = 0; i< rows.size(); i++ ) {
-	    	    for (int j = 0; j < maxlist; j++) {
-	    	      @SuppressWarnings("unchecked")
-				  ArrayList<Number> list = (ArrayList<Number>) rows.get(i);	
-	    	      array[i][j]= (Double) list.get(j);
-	    	    }
+    	    double[] array = new double[maxlist];
+    	    for (int i = 0; i< list.size(); i++ ) {
+    	    	array[i]= (Double) list.get(i);
     	    }
-    	    DoubleArrayMatlab ldmat = new DoubleArrayMatlab();
+    	    ArrayMatlab ldmat = new ArrayMatlab();
     	    ldmat.val = array;
     	    return ldmat;         
           }
