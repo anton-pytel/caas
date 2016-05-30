@@ -7,7 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Date;
-
+import java.util.List;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
@@ -41,6 +41,7 @@ public class MpcController {
 	public ControlledSystem ctlSys;
 	public ControllerParams ctlParam;
 	public CtrlComputedParam ctlCptParam;
+	public List<ControllerStep> ctlStep;
 	public EnumStatus state;
 	
 
@@ -50,13 +51,17 @@ public class MpcController {
 	public MpcController(ControlledSystem  ctlSys,
 				  		 ControllerParams ctlParam,
 				 		 CtrlComputedParam ctlCptParam,
+				 		 List<ControllerStep> ctlStep,
 				 		 EnumStatus state){
 		this.ctlSys = ctlSys;
 		this.ctlParam = ctlParam;
 		this.ctlCptParam = ctlCptParam;
+		this.ctlStep = ctlStep;
 		this.state = state;
 	}
-	
+	public void addStep(ControllerStep xStep){
+		this.ctlStep.add(xStep);
+	}
 	public void setCreated(Date xDate){
 		this.created = xDate;
 	}
