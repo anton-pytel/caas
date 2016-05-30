@@ -1,148 +1,169 @@
-function yJson=mpc_main(xJson)
-yJson = xJson; %save the init state and others will be completed next
-%T=5; % sampling time
-T = xJson.ctlSys.samplingTime; %0.1;
-Delay = xJson.ctlSys.inputDelay;
+function yJson=mpc_main(xJson,funcType)
 
-if isfield(xJson.ctlSys, 'ss')
-    % state space
-    a=xJson.ctlSys.ss.sysA.val;
-    b=xJson.ctlSys.ss.sysB.val;
-    c=xJson.ctlSys.ss.sysC.val;
-    d=xJson.ctlSys.ss.sysD.val;
-else
-    % transfer function
-    switch xJson.ctlSys.tfcn.sysType
-        case 'zspace'
-            z=tf('z',T);
-            % '(0.000272 + 0.000272*z^-1 + 0.000272*z^-2)/(1 - 2.918*z^-1 + 2.884*z^-2 - 0.9655*z^-3)'
-            G = eval(xJson.ctlSys.tfcn.sysString);
-        case 'space'
-            s=tf('s',T);
-            G = eval(xJson.ctlSys.tfcn.sysString);
-        case 'numden'
-            for i=1:length(xJson.ctlSys.tfcn.sysNum)
-               row=xJson.ctlSys.tfcn.sysNum{i};
-               for j=1: length(row)
-                   num{i,j}=row{j}.val;
-               end 
+switch funcType
+    case '0'
+        yJson = xJson; %save the init state and others will be completed next
+        %T=5; % sampling time
+        T = xJson.ctlSys.samplingTime; %0.1;
+        Delay = xJson.ctlSys.inputDelay;
+
+        if isfield(xJson.ctlSys, 'ss')
+            % state space
+            a=xJson.ctlSys.ss.sysA.val;
+            b=xJson.ctlSys.ss.sysB.val;
+            c=xJson.ctlSys.ss.sysC.val;
+            d=xJson.ctlSys.ss.sysD.val;
+        else
+            % transfer function
+            switch xJson.ctlSys.tfcn.sysType
+                case 'zspace'
+                    z=tf('z',T);
+                    % '(0.000272 + 0.000272*z^-1 + 0.000272*z^-2)/(1 - 2.918*z^-1 + 2.884*z^-2 - 0.9655*z^-3)'
+                    G = eval(xJson.ctlSys.tfcn.sysString);
+                case 'space'
+                    s=tf('s',T);
+                    G = eval(xJson.ctlSys.tfcn.sysString);
+                case 'numden'
+                    for i=1:length(xJson.ctlSys.tfcn.sysNum)
+                       row=xJson.ctlSys.tfcn.sysNum{i};
+                       for j=1: length(row)
+                           num{i,j}=row{j}.val;
+                       end 
+                    end
+                    for i=1:length(xJson.ctlSys.tfcn.sysDen)
+                       row=xJson.ctlSys.tfcn.sysDen{i};
+                       for j=1: length(row)
+                           den{i,j}=row{j}.val;
+                       end 
+                    end            
+                    %G = tf( {1.467 -0.7322; -0.4399 1.19 },{[1.029 1] [1.161 1]; [1.404 1] [0.5369 1]});
+                    G= tf(num, den);
             end
-            for i=1:length(xJson.ctlSys.tfcn.sysDen)
-               row=xJson.ctlSys.tfcn.sysDen{i};
-               for j=1: length(row)
-                   den{i,j}=row{j}.val;
-               end 
-            end            
-            %G = tf( {1.467 -0.7322; -0.4399 1.19 },{[1.029 1] [1.161 1]; [1.404 1] [0.5369 1]});
-            G= tf(num, den);
-    end
-    [inp_del,a,b,c,d]=mpc_system(T,Delay,G);
-    %nech mame ulozeny state space
-    yJson.ctlSys.ss.sysA.val=a;
-    yJson.ctlSys.ss.sysB.val=b;
-    yJson.ctlSys.ss.sysC.val=c;
-    yJson.ctlSys.ss.sysD.val=d;
-end
-% "CtlParam": {
-%     "PredictHorizon": 0,
-%     "Qy": 1,
-%     "Sy": 1,
-%     "Qu": 0.01,
-%     "UMin": null,
-%     "UMax": null,
-%     "DuMin": null,
-%     "DuMax": null,
-%     "YMin": null,
-%     "YMax": null,
-%     "DyMin": null,
-%     "DyMax": null,
-%     "RefSig": null
+            [inp_del,a,b,c,d]=mpc_system(T,Delay,G);
+            %nech mame ulozeny state space
+            yJson.ctlSys.ss.sysA.val=a;
+            yJson.ctlSys.ss.sysB.val=b;
+            yJson.ctlSys.ss.sysC.val=c;
+            yJson.ctlSys.ss.sysD.val=d;
+        end
 
-%   "CtlCptParam": {
-%     "Ahat": null,
-%     "Bhat": null,
-%     "QHat": null,
-%     "QuHat": null,
-%     "HHat": null,
-%     "Nx": 0,
-%     "Nu": 0,
-%     "Ny": 0
+        % Weightings:
+        Qy = xJson.ctlParam.qy; %1;
+        Sy = xJson.ctlParam.sy; %1;
+        Qu = xJson.ctlParam.qu; %0.01;
 
-% Weightings:
-Qy = xJson.ctlParam.qy; %1;
-Sy = xJson.ctlParam.sy; %1;
-Qu = xJson.ctlParam.qu; %0.01;
+        % Horizon is Np (both for objective function and for constraints);
+        Np = xJson.ctlParam.predictHorizon;  %20 iteration
 
-% Horizon is Np (both for objective function and for constraints);
-Np = xJson.ctlParam.predictHorizon;  %20 iteration
+        [Ahat,Bhat,Qhat,Quhat,Hhat,nx,nu,ny]=mpc_init2(a,b,c,d,Qy,Sy,Qu,Np);
+        yJson.ctlCptParam.aHat.val=Ahat;
+        yJson.ctlCptParam.bHat.val=Bhat;
+        yJson.ctlCptParam.qHat.val=Qhat;
+        yJson.ctlCptParam.quHat.val=Quhat;
+        yJson.ctlCptParam.hHat.val=Hhat;
+        yJson.ctlCptParam.nx=nx;
+        yJson.ctlCptParam.nu=nu;
+        yJson.ctlCptParam.ny=ny;
+        return;
+    otherwise 
+        Np = xJson.ctlParam.predictHorizon;  %20 iteration
+        a = xJson.ctlSys.ss.sysA.val;
+        b = xJson.ctlSys.ss.sysB.val;
+        c = xJson.ctlSys.ss.sysC.val;
+        d = xJson.ctlSys.ss.sysD.val;
+        Ahat = xJson.ctlCptParam.aHat.val;
+        Bhat = xJson.ctlCptParam.bHat.val;
+        Qhat = xJson.ctlCptParam.qHat.val;
+        Quhat = xJson.ctlCptParam.quHat.val;
+        Hhat = xJson.ctlCptParam.hHat.val;
+        nx = xJson.ctlCptParam.nx;
+        nu = xJson.ctlCptParam.nu;
+        ny = xJson.ctlCptParam.ny;
+        Qy = xJson.ctlParam.qy; %1;
+        Sy = xJson.ctlParam.sy; %1;
+        Qu = xJson.ctlParam.qu;
+        
+%         umin=[-10;-10];
+%         umax=[10;10];
+%         dumin=[-20;-20];
+%         dumax=[20;20];
+%         ymin=[-10;-10];
+%         ymax=[10;10];
+%         dymin=[-20;-20];
+%         dymax=[20;20];
+        isfound = false;
+        i=1;
+        while ~isfound
+          if (xJson.ctlStep{i}.stepid == str2double(funcType))
+              ljson = xJson.ctlStep{i};
+%               if i>1 
+%                   bjson = xJson.ctlStep{i-1}.ctrlStateNew;
+%               else
+%                   bjson =xJson.ctlSys.ctrlStateNew;
+%               end
+              isfound = true;
+          end
+          i = i +1;
+        end
+        umin=ljson.ctrlConstr.uMin.val;
+        umax=ljson.ctrlConstr.uMax.val;
+        dumin=ljson.ctrlConstr.duMin.val;
+        dumax=ljson.ctrlConstr.duMax.val;
+        ymin=ljson.ctrlConstr.yMin.val;
+        ymax=ljson.ctrlConstr.yMax.val;
+        dymin=ljson.ctrlConstr.dyMin.val;
+        dymax=ljson.ctrlConstr.dyMax.val;
+        
+        %y0=zeros(ny,1); % Actual output - can be measured
+        y0 = ljson.ctrlStateLast.y0.val;
+        
+        %x0=c\y0;         % First state value is according to actual output
+        x0 = ljson.ctrlStateLast.x1.val;
+        
+        %x00=zeros(nx,1); % initialize previous state
+        x00 = ljson.ctrlStateLast.x0.val;
+        
+        %u0=zeros(nu,1);  % Prvy akcny zasah
+        u0= ljson.ctrlStateLast.u0.val;
 
-[Ahat,Bhat,Qhat,Quhat,Hhat,nx,nu,ny]=mpc_init2(a,b,c,d,Qy,Sy,Qu,Np);
-yJson.ctlCptParam.aHat.val=Ahat;
-yJson.ctlCptParam.bHat.val=Bhat;
-yJson.ctlCptParam.qHat.val=Qhat;
-yJson.ctlCptParam.quHat.val=Quhat;
-yJson.ctlCptParam.hHat.val=Hhat;
-yJson.ctlCptParam.nx=nx;
-yJson.ctlCptParam.nu=nu;
-yJson.ctlCptParam.ny=ny;
-return;
+        
+        % v kazdom kroku je potrebne mat tu istu hodnotu, lebo v kazdom kroku
+        % overujem danu podmienku
+        umin = repmat(umin,Np,1);
+        umax = repmat(umax,Np,1);
+        ymin = repmat(ymin,Np,1);
+        ymax = repmat(ymax,Np,1);
+        dumin = repmat(dumin,Np,1);
+        dumax = repmat(dumax,Np,1);
+        dymin = repmat(dymin,Np,1);
+        dymax = repmat(dymax,Np,1);
 
-% Constraints (implemented as hard here):
-% umin=4;
-% umax=28;
-% dumin=-20;
-% dumax=20;
-% ymin=0;
-% ymax=30;
-% dymin=-30;
-% dymax=30;
+        simulation_time = 10;
+        NN=ceil(simulation_time/T); % Simulate NN samples:
 
-umin=[-10;-10];
-umax=[10;10];
-dumin=[-20;-20];
-dumax=[20;20];
-ymin=[-10;-10];
-ymax=[10;10];
-dymin=[-20;-20];
-dymax=[20;20];
+        warning('off');% Turn off warnings from quadprog:
 
-y0=zeros(ny,1); % Actual output - can be measured
+        % signal reference handling
+        yreff = [0;0];
+        yref_signal = eval('[0, 2; 5, 0]'); 
 
-x0=c\y0;         % First state value is according to actual output
-x00=zeros(nx,1); % initialize previous state
-u0=zeros(nu,1);  % Prvy akcny zasah
-
-% v kazdom kroku je potrebne mat tu istu hodnotu, lebo v kazdom kroku
-% overujem danu podmienku
-umin = repmat(umin,Np,1);
-umax = repmat(umax,Np,1);
-ymin = repmat(ymin,Np,1);
-ymax = repmat(ymax,Np,1);
-dumin = repmat(dumin,Np,1);
-dumax = repmat(dumax,Np,1);
-dymin = repmat(dymin,Np,1);
-dymax = repmat(dymax,Np,1);
-
-simulation_time = 10;
-NN=ceil(simulation_time/T); % Simulate NN samples:
-
-warning('off');% Turn off warnings from quadprog:
-
-% signal reference handling
-yreff = [0;0];
-yref_signal = eval('[0, 2; 5, 0]'); 
-
-sidx = 1; %index referencneho signalu
-smax = size(yref_signal,1); %max index ref. signalu
-if yref_signal(sidx,1) == 0 % ak je prvy nastaveny na 0
-  % tak dame hned hodnotu
-  [yref,xref,uref] = mpc_get_ref(Np,c,ny,nu, yref_signal(1,2));  
-  yreff(2) = yref(1);
-  % a zvysime index
-  sidx = sidx + 1;
-else % inak nastavime na 0
-  [yref,xref,uref] = mpc_get_ref(Np,c,ny,nu,0);    
-end
+        sidx = 1; %index referencneho signalu
+        smax = size(yref_signal,1); %max index ref. signalu
+        if yref_signal(sidx,1) == 0 % ak je prvy nastaveny na 0
+          % tak dame hned hodnotu
+          [yref,xref,uref] = mpc_get_ref(Np,c,ny,nu, yref_signal(1,2));  
+          yreff(2) = yref(1);
+          % a zvysime index
+          sidx = sidx + 1;
+        else % inak nastavime na 0
+          [yref,xref,uref] = mpc_get_ref(Np,c,ny,nu,0);    
+        end
+        yJson.y0.val=1;
+        yJson.x0.val=1;
+        yJson.x1.val=1;
+        yJson.u0.val=1;
+        return;
+end        
 
 % Test controlling different system, than identified
 % z=tf('z',0.25);

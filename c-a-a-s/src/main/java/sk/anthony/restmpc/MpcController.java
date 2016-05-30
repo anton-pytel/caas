@@ -24,7 +24,9 @@ import com.google.gson.annotations.SerializedName;
 
 @Document(collection = "controllers")
 public class MpcController {
-	
+
+	final String MATLAB_CONTROLLER = "0";
+	 
 	public enum EnumStatus {
 		@SerializedName("init")
 		INIT,
@@ -73,6 +75,13 @@ public class MpcController {
         return mpcid;
     }
     
+    public Double getLastStepId() {
+    	if (this.ctlStep != null) {
+    		return this.ctlStep.get(this.ctlStep.size()-1).stepid;
+    	}
+    	return null;
+    }
+    
 	public MpcController getMC(String mpcid){
 		@SuppressWarnings("resource")
 		ApplicationContext ctx = new GenericXmlApplicationContext("SpringConfig.xml");
@@ -82,23 +91,46 @@ public class MpcController {
 		MpcController lMC = mongoOperation.findOne(searchUserQuery, MpcController.class);
 		return lMC;
 	}
+
+	public ControllerStep getStep(double stepid){
+		ControllerStep cs = null;
+    	if (this != null && this.ctlStep != null && this.ctlStep.size() > 0) { 
+	    	for (int i=0; i<this.ctlStep.size(); i++){
+	    		cs = this.ctlStep.get(i);
+	    		if (cs.stepid == stepid){
+	    			return cs;
+	    		}
+	    		cs = null;
+	    	}
+    	}
+    	return cs;
+	}
 	
-	public MpcController store2Mongo(MpcController xMC){
+	public ControllerStep[] getSteps(){
+    	if (this != null && this.ctlStep != null && this.ctlStep.size() > 0) { 
+	    	ControllerStep[] cs = new ControllerStep[this.ctlStep.size()];
+	    	for (int i=0; i<this.ctlStep.size(); i++){
+	    		cs[i] = this.ctlStep.get(i);
+	    	}
+	    	return cs;
+    	}
+    	return null;
+	}
+	
+	public void store2Mongo(){
 		@SuppressWarnings("resource")
 		ApplicationContext ctx = new GenericXmlApplicationContext("SpringConfig.xml");
 		MongoOperations mongoOperation = (MongoOperations) ctx.getBean("mongoTemplate");
-		xMC.setCreated(new Date());
-		mongoOperation.save(xMC);
-		return xMC;		
+		this.setCreated(new Date());
+		mongoOperation.save(this);		
 	}
 
-	public MpcController update2Mongo(MpcController xMC){
+	public void update2Mongo(){
 		@SuppressWarnings("resource")
 		ApplicationContext ctx = new GenericXmlApplicationContext("SpringConfig.xml");
 		MongoOperations mongoOperation = (MongoOperations) ctx.getBean("mongoTemplate");
-		xMC.setUpdated(new Date());
-		mongoOperation.save(xMC);
-		return xMC;		
+		this.setUpdated(new Date());
+		mongoOperation.save(this);		
 	}
 	
 	public void storeFile(MpcController xMC){
@@ -141,13 +173,14 @@ public class MpcController {
 		mongoOperation.save(e);
 	}
 
-	public MpcController runMatlab(MpcController xMC){
+	public MpcController runMatlab(MpcController xMC, String fncType){
 		storeFile(xMC);
 		PropertyFile.init(); 
 		try {
 	        ProcessBuilder pb = new ProcessBuilder(PropertyFile.prop.getProperty("pythonBin"), 
 	        									   PropertyFile.prop.getProperty("matlabIfc"),
-								 		           xMC.mpcid
+								 		           xMC.mpcid,
+								 		           fncType
 								 		           );
 			Process p = pb.start();	
 			int exitVal = p.waitFor();
@@ -174,5 +207,27 @@ public class MpcController {
 		xMC = loadFile(xMC);
 		return xMC;
 	}
+	
+	 public void init() {
+		if (this.ctlParam == null ){
+			this.ctlParam = new ControllerParams();
+		}	
+	 }
+	 
+	 public void afterMatlab(){
+    	//vyplnime default stav, ref signal a obmedzenia
+		if (this.ctlSys.ctrlState == null) {
+			this.ctlSys.ctrlState = new ControllerState(this.ctlCptParam.nx,
+														this.ctlCptParam.nu,
+														this.ctlCptParam.ny);
+			
+		}
+    	if (this.ctlParam.refSig == null){
+    		this.ctlParam.setRefSig(this.ctlCptParam.ny);
+    	}
+    	if (this.ctlParam.ctrlConstr == null){
+    		this.ctlParam.ctrlConstr = new ControllerConstraints(this.ctlCptParam.ny,this.ctlCptParam.nu,null,null,null,null,null,null,null,null);
+    	}
+	 }
 
 }

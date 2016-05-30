@@ -13,7 +13,7 @@ public class MatArraysTypeAdapterFactory implements TypeAdapterFactory {
 	public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
 	    if (type.getRawType() == DoubleArrayMatlab.class){
 	    	return (TypeAdapter<T>) new DoubleMatArrayTypeAdapter();
-	    } else if (type.getRawType() == ArrayMatlab[][].class ) {
+	    } else if (type.getRawType() == ArrayMatlab.class ) {
 	    	return (TypeAdapter<T>) new MatArrayTypeAdapter();	    	
 	    } else if (type.getRawType() == CellMatlab[][].class ) {
 	    	return (TypeAdapter<T>) new MatCellArrTypeAdapter();

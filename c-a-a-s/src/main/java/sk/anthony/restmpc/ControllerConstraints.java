@@ -35,7 +35,7 @@ public class ControllerConstraints {
 	private double[] fillWtihVal(int arrSize, double value){
 		double[] arr = new double[arrSize];
 		for (int i=0;i<arrSize;i++){
-			arr[0] = value;
+			arr[i] = value;
 		}
 		return arr;
 	}

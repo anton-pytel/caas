@@ -25,8 +25,6 @@ public class MatArrayTypeAdapter extends TypeAdapter<ArrayMatlab> {
             in.nextNull();
             return null;
           } else {
-        	//ak je pole sprav double pole 
-        	//ak je double pole, tak sprav double pole
     	    int maxlist = 0;
     	    in.beginObject();
     	    in.nextName();
