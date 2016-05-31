@@ -1,6 +1,7 @@
 package sk.anthony.restmpc;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -149,20 +150,24 @@ public class MpcController {
 	}
 	
 	public MpcController loadFile(MpcController xMC){
+		final String LOG_OPTION = "Y";
 		PropertyFile.init();
 		GsonBuilder builder = new GsonBuilder();
 		builder.registerTypeAdapterFactory(new MatArraysTypeAdapterFactory());
 		Gson gson = builder.create(); 
 		BufferedReader br = null;
+		String filename = PropertyFile.prop.getProperty("matlabFS")+xMC.mpcid;
 		try {
-			br = new BufferedReader( new FileReader(PropertyFile.prop.getProperty("matlabFS")+xMC.mpcid));
+			br = new BufferedReader( new FileReader(filename));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			storeErr(e);
 		}
 		//convert the json string back to object
 		xMC = gson.fromJson(br, MpcController.class);
-		
+		if (PropertyFile.prop.getProperty("logging").toString() != LOG_OPTION) {
+			new File(filename).delete();
+		}
 		return xMC;
 	}
 

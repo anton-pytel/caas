@@ -20,8 +20,8 @@ switch funcType
                     z=tf('z',T);
                     % '(0.000272 + 0.000272*z^-1 + 0.000272*z^-2)/(1 - 2.918*z^-1 + 2.884*z^-2 - 0.9655*z^-3)'
                     G = eval(xJson.ctlSys.tfcn.sysString);
-                case 'space'
-                    s=tf('s',T);
+                case 'sspace'
+                    s=tf('s');
                     G = eval(xJson.ctlSys.tfcn.sysString);
                 case 'numden'
                     for i=1:length(xJson.ctlSys.tfcn.sysNum)
@@ -105,26 +105,26 @@ switch funcType
           end
           i = i +1;
         end
-        umin=ljson.ctrlConstr.uMin.val;
-        umax=ljson.ctrlConstr.uMax.val;
-        dumin=ljson.ctrlConstr.duMin.val;
-        dumax=ljson.ctrlConstr.duMax.val;
-        ymin=ljson.ctrlConstr.yMin.val;
-        ymax=ljson.ctrlConstr.yMax.val;
-        dymin=ljson.ctrlConstr.dyMin.val;
-        dymax=ljson.ctrlConstr.dyMax.val;
+        umin=ljson.ctrlConstr.uMin.val';
+        umax=ljson.ctrlConstr.uMax.val';
+        dumin=ljson.ctrlConstr.duMin.val';
+        dumax=ljson.ctrlConstr.duMax.val';
+        ymin=ljson.ctrlConstr.yMin.val';
+        ymax=ljson.ctrlConstr.yMax.val';
+        dymin=ljson.ctrlConstr.dyMin.val';
+        dymax=ljson.ctrlConstr.dyMax.val';
         
         %y0=zeros(ny,1); % Actual output - can be measured
         y0 = ljson.ctrlStateLast.y0.val;
         
         %x0=c\y0;         % First state value is according to actual output
-        x0 = ljson.ctrlStateLast.x1.val;
+        x0 = ljson.ctrlStateLast.x1.val';
         
         %x00=zeros(nx,1); % initialize previous state
-        x00 = ljson.ctrlStateLast.x0.val;
+        x00 = ljson.ctrlStateLast.x0.val';
         
         %u0=zeros(nu,1);  % Prvy akcny zasah
-        u0= ljson.ctrlStateLast.u0.val;
+        u0= ljson.ctrlStateLast.u0.val';
 
         
         % v kazdom kroku je potrebne mat tu istu hodnotu, lebo v kazdom kroku
@@ -138,30 +138,35 @@ switch funcType
         dymin = repmat(dymin,Np,1);
         dymax = repmat(dymax,Np,1);
 
-        simulation_time = 10;
-        NN=ceil(simulation_time/T); % Simulate NN samples:
+        %simulation_time = 10;
+        %NN=ceil(simulation_time/T); % Simulate NN samples:
 
         warning('off');% Turn off warnings from quadprog:
 
         % signal reference handling
-        yreff = [0;0];
-        yref_signal = eval('[0, 2; 5, 0]'); 
+        %yreff = [0;0];
+        %yref_signal = eval('[0, 2; 5, 0]'); 
+        yref_signal=ljson.refSig;
+        [yref,xref,uref] = mpc_get_ref(Np,c,ny,nu, yref_signal);
 
-        sidx = 1; %index referencneho signalu
-        smax = size(yref_signal,1); %max index ref. signalu
-        if yref_signal(sidx,1) == 0 % ak je prvy nastaveny na 0
-          % tak dame hned hodnotu
-          [yref,xref,uref] = mpc_get_ref(Np,c,ny,nu, yref_signal(1,2));  
-          yreff(2) = yref(1);
-          % a zvysime index
-          sidx = sidx + 1;
-        else % inak nastavime na 0
-          [yref,xref,uref] = mpc_get_ref(Np,c,ny,nu,0);    
-        end
-        yJson.y0.val=1;
-        yJson.x0.val=1;
-        yJson.x1.val=1;
-        yJson.u0.val=1;
+        u0 = repmat(u0,Np,1);
+        [u,exitflag]=mpc_calc(Ahat,Bhat,Qhat,Quhat,Hhat,x0,x00,u0,xref,uref,umin,umax,...
+                              dumin,dumax,ymin,ymax,dymin,dymax);
+        if exitflag<0 
+            disp('WARNING: infeasible QP problem')
+        end;
+        % Implement present state:
+        x=a*x0+b*u(1:nu);
+        u0 = u(1:nu);
+        % save last state
+        x00=x0;
+        % New initial state for next sample
+        x0=x;
+        y=c*x;
+        yJson.y0.val=y';
+        yJson.x0.val=x00';
+        yJson.x1.val=x0';
+        yJson.u0.val=u0';
         return;
 end        
 

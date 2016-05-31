@@ -1,6 +1,7 @@
 package sk.anthony.restmpc;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStreamReader;
@@ -14,11 +15,11 @@ import com.google.gson.GsonBuilder;
 public class ControllerStep {
 		
 	public double stepid;
-	public Date created;	
+	public Date created;
+	public ControllerState ctrlStateLast;
+	public ControllerState ctrlStateNew;	
 	public ControllerConstraints ctrlConstr; 
     public RefSignal[][] refSig; 
-	public ControllerState ctrlStateLast;
-	public ControllerState ctrlStateNew;
     
     public ControllerStep(){
     	
@@ -89,23 +90,30 @@ public class ControllerStep {
 	}
 	
 	private String getSuffix(double stepid){
-		return "_" + String.valueOf(stepid);
+		return "_" + String.format("%.0f",stepid);
 	}
 
 	public ControllerState loadFile(MpcController xMC, double stepid){
+		final String LOG_OPTION = "Y";
 		PropertyFile.init();
 		GsonBuilder builder = new GsonBuilder();
 		builder.registerTypeAdapterFactory(new MatArraysTypeAdapterFactory());
 		Gson gson = builder.create(); 
 		BufferedReader br = null;
+		String filename = PropertyFile.prop.getProperty("matlabFS")+xMC.mpcid+getSuffix(stepid);
+		String filename1 = PropertyFile.prop.getProperty("matlabFS")+xMC.mpcid;
 		try {
-			br = new BufferedReader( new FileReader(PropertyFile.prop.getProperty("matlabFS")+xMC.mpcid+getSuffix(stepid)));
+			br = new BufferedReader( new FileReader(filename));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			xMC.storeErr(e);
 		}
 		//convert the json string back to object
 		ControllerState cs = gson.fromJson(br, ControllerState.class);
+		if (PropertyFile.prop.getProperty("logging").toString() != LOG_OPTION) {
+			new File(filename).delete();
+			new File(filename1).delete();
+		}
 		return cs;
 	}
 

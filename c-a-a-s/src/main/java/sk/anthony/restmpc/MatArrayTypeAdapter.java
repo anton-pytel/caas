@@ -28,6 +28,10 @@ public class MatArrayTypeAdapter extends TypeAdapter<ArrayMatlab> {
     	    int maxlist = 0;
     	    in.beginObject();
     	    in.nextName();
+    	    try {
+      	      in.beginArray();
+      	    } catch (IllegalStateException e) {
+      	    }    	    
     	    List<Number> list = new ArrayList<Number>();
     	    while (in.hasNext()) {
     	      double instance = in.nextDouble();
@@ -36,7 +40,6 @@ public class MatArrayTypeAdapter extends TypeAdapter<ArrayMatlab> {
     	    try {
       	      in.endArray();
       	    } catch (IllegalStateException e) {
-      	    	
       	    }
 	        if (maxlist<list.size()) {
 	        	maxlist=list.size();
