@@ -72,7 +72,20 @@ public class ControllerStep {
 			//ak nemame posledny stav zo vstupu, tak precitame NEW z posledneho
 			if (xStep.ctrlStateLast == null ){
 				xStep.ctrlStateLast = xMC.getStep(xMC.getLastStepId()).ctrlStateNew;
-			}			
+			} else { // skontrolujeme vsetky zlozky, ake nejaka neexistuje precitame z posledneho
+				if (xStep.ctrlStateLast.u0 == null){
+					xStep.ctrlStateLast.u0 = xMC.getStep(xMC.getLastStepId()).ctrlStateNew.u0;
+				}
+				if (xStep.ctrlStateLast.x0 == null){
+					xStep.ctrlStateLast.x0 = xMC.getStep(xMC.getLastStepId()).ctrlStateNew.x0;
+				}
+				if (xStep.ctrlStateLast.x1 == null){
+					xStep.ctrlStateLast.x1 = xMC.getStep(xMC.getLastStepId()).ctrlStateNew.x1;
+				}
+				if (xStep.ctrlStateLast.y0 == null){
+					xStep.ctrlStateLast.y0 = xMC.getStep(xMC.getLastStepId()).ctrlStateNew.y0;
+				}				
+			}
 			xMC.ctlStep.add(xStep);
 		} else {
 			xStep.stepid = 1;
@@ -80,7 +93,20 @@ public class ControllerStep {
 			//ak nemame posledny stav zo vstupu, tak precitame z controllera
 			if (xStep.ctrlStateLast == null ){
 				xStep.ctrlStateLast = xMC.ctlSys.ctrlState;
-			}			
+			} else { // skontrolujeme vsetky zlozky, ake nejaka neexistuje precitame z posledneho
+				if (xStep.ctrlStateLast.u0 == null){
+					xStep.ctrlStateLast.u0 = xMC.ctlSys.ctrlState.u0;
+				}
+				if (xStep.ctrlStateLast.x0 == null){
+					xStep.ctrlStateLast.x0 = xMC.ctlSys.ctrlState.x0;
+				}
+				if (xStep.ctrlStateLast.x1 == null){
+					xStep.ctrlStateLast.x1 = xMC.ctlSys.ctrlState.x1;
+				}
+				if (xStep.ctrlStateLast.y0 == null){
+					xStep.ctrlStateLast.y0 = xMC.ctlSys.ctrlState.y0;
+				}				
+			}		
 			xMC.ctlStep.add(xStep);
 		}
 		ControllerState cs = runMatlab(xMC, xStep.stepid);

@@ -1,6 +1,7 @@
 function res=mpcJavaInterface(mpcid,funcType)
 disp(strcat('Processing controller id: ', mpcid,'_',funcType));
-filename=strcat('c:\Users\apytel\Documents\study\java\caas\data-matlab\',mpcid);
+config=load('config.mat');
+filename=strcat(config.filebase,mpcid);
 if funcType == '0'
     filename1=filename;
 else

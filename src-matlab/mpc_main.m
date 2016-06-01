@@ -117,8 +117,8 @@ switch funcType
         %y0=zeros(ny,1); % Actual output - can be measured
         y0 = ljson.ctrlStateLast.y0.val;
         
-        %x0=c\y0;         % First state value is according to actual output
-        x0 = ljson.ctrlStateLast.x1.val';
+        x0=c\y0;         % state value is according to actual output
+        %x0 = ljson.ctrlStateLast.x1.val';
         
         %x00=zeros(nx,1); % initialize previous state
         x00 = ljson.ctrlStateLast.x0.val';
