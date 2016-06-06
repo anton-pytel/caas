@@ -115,7 +115,7 @@ switch funcType
         dymax=ljson.ctrlConstr.dyMax.val';
         
         %y0=zeros(ny,1); % Actual output - can be measured
-        y0 = ljson.ctrlStateLast.y0.val;
+        y0 = ljson.ctrlStateLast.y0.val';
         
         x0=c\y0;         % state value is according to actual output
         %x0 = ljson.ctrlStateLast.x1.val';
