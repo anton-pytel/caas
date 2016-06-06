@@ -115,7 +115,7 @@ switch funcType
         dymax=ljson.ctrlConstr.dyMax.val';
         
         %y0=zeros(ny,1); % Actual output - can be measured
-        y0 = ljson.ctrlStateLast.y0.val;
+        y0 = ljson.ctrlStateLast.y0.val';
         
         x0=c\y0;         % state value is according to actual output
         %x0 = ljson.ctrlStateLast.x1.val';
@@ -152,9 +152,12 @@ switch funcType
         u0 = repmat(u0,Np,1);
         [u,exitflag]=mpc_calc(Ahat,Bhat,Qhat,Quhat,Hhat,x0,x00,u0,xref,uref,umin,umax,...
                               dumin,dumax,ymin,ymax,dymin,dymax);
-        if exitflag<0 
+        try
+		if exitflag<0 
             disp('WARNING: infeasible QP problem')
         end;
+		catch
+		end
         % Implement present state:
         x=a*x0+b*u(1:nu);
         u0 = u(1:nu);

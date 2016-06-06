@@ -1,0 +1,13 @@
+#!/usr/bin/octave -qf
+
+# example octave script
+addpath('/home/tony/study/jsonlab')
+arg_list = argv ();
+cd (arg_list{1});
+pkg load control;
+pkg load optim;
+res = mpcJavaInterface(arg_list{2},arg_list{3});
+
+
+
+

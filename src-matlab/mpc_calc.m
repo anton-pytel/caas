@@ -25,4 +25,10 @@ b1=-[bu_min; bu_max; bdu_min; bdu_max; bx_min; bx_max; ]; %bdx_min; bdx_max
 
 H=Bhat'*Qhat*Bhat+Quhat;
 f=(Xdev'*Qhat*Bhat);
+try
 [u,J,iflag]=quadprog(H,f,L1,b1);
+catch
+% uprava kvoli octave [u,J,iflag]=quadprog(H,f,L1,b1);
+f=f';
+[u,J,iflag]= qp([], H,f, [], [], [], [], [], L1, b1);
+end

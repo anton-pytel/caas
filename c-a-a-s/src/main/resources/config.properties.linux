@@ -1,0 +1,5 @@
+#all properties
+pythonBin=/home/tony/study/caas/src-matlab/javaMatlabPreInterface
+matlabIfc=/home/tony/study/caas/src-matlab/
+matlabFS=/home/tony/study/caas/data-matlab/
+logging=N
