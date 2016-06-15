@@ -906,8 +906,119 @@ Nie je tu porovnanie voči iným regulátorom, pretože to nie je zámerom tejto
 \caption{Ukážka vplyvu obmedzenia zmeny riadiaceho zásahu na časový priebeh riadiaceho zásahu.}
 \end{figure}
 
+Na základe týchto experimentov sa potvrdzujú výhody MPC regulátora, ktoré boli spomenuté v úvode ohľadne jednoduchosti zavedenia obmedzení. V tomto sa MPC viac blíži k reálnym systémom ako iné regulátory napr. PID, kde sa obmedzenia akčného zásahu musí špeciálne riešiť.
+
 Ďalší nástroj na overenie MPC algoritmu je voľne stiahnuteľný
 a~použiteľný v~prostredí Matlab. Názov je MPT toolbox. Je to dielo
 inštitútu pre automatizáciu vo Švajčiarsku. Tento program je jeden
 z~najpouživanejších v~prostredí Matlab.
 
+\subsubsection{Popis systému riadenia plynovej turbíny}
+Turbína s~výkonom 1,5MW obsahuje tri hlavné časti, menovite, kompresor,
+spaľovaciu komorou a~vysokotlakovú turbínu. V~rokoch 1950 bolo
+priemyselné využitie turbín významne rozšírené, kvôli jej nespočetným
+výhodám. Napríklad neprítomnosť častí, ktoré by sa o~seba odierali,
+nízka spotreba palív a~vysoká operačná spoľahlivosť. Prvá časť turbíny
+zahŕňa stláčanie vzduchu na poskytnutie vysokého pomeru tlaku medzi
+turbínou a~kompresorom, takže sa vzduch rozpína do turbíny. Zvyšovanie
+teploty vzduchu spaľovaním paliva spôsobuje väčšie rozpínanie horúceho
+vzduchu v~turbíne, poskytujúc tak potrebný výstupný výkon. Pre rôzne
+prietoky vzduchu je limitovaný pomer vzduchu, ktorý môže byť dodaný, čo
+je označované ako pomer palivo/vzduch. Tento faktor obmedzuje výstupný
+výkon, ktorý môže byť dosiahnutý.~Maximálny pomer palivo/vzduch je
+určený pracovnou teplotou lopatiek turbíny, ktoré sú vysoko stláčané.
+Zaznamenanie možnej poruchy lopatiek je dôležitý problém pri monitoringu
+a~detekcii chýb. Primárna požiadavka na riadenie je výstupný výkon, ale
+neexistuje žiadny vhodný spôsob merania výkonu. Premenné súvisiace
+s~výkonom sú riadené prostredníctvom riadenia generátora rýchlosti
+N\textsubscript{g}, moduláciou prívodu paliva, kde N\textsubscript{g} je
+funkciou výkonu generátora. Riadiaci zásah určuje množstvo paliva
+dodávaného do motora, čo je funkciou uhla otvorenia klapky
+\(\theta_{v}\left( \right).\) Parametre systému a~regulátora: rýchlosť
+motora leží medzi 0 a~30~000 rpm (=500rps) táto premenná môže byť
+považovaná za známu a~reprezentuje od 0 po 1.5MW. Vstup do systému je
+náklon plynovej klapky 0-60°, čo je ekvivalent toku paliva 0-625kg/h.
+Riadiaci rozsah výkonu je od 0 po plný výkon. Od 17~001-27~000 rpm
+(283,35-450rps) je považovaný za stabilný stav rýchlosti generátora.\cite{MPC07}
+\subsubsection{Identifikácia a riadenie systému plynovej turbíny}
+Vstupné dáta na identifikáciu systému sú zobrazené na obrázku  \ref{12_data}. 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{12_data.png}
+\caption{Časový priebeh nameraných údajov výstup a vstup systému.}
+\label{12_data}
+\end{figure}
+Premenná y\textsubscript{1} reprezentuje výstup - otáčky motora a~u\textsubscript{1}
+vstup systému - natočenie klapky. Na identifikáciu systému bol použitý Matlab nástroj \textit{ident}. Pri zisťovaní matematického modelu bolo vyskúšaných viacero metód. Najlepšie
+výsledky - percento zhody nameraných a simulovaných dát dal arx model. Porovnanie nameraných a~simulovaných dát sú na
+obrázku \ref{13_ident}.
+
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{13_ident.png}
+\caption{Porovnanie simulovaných a nameraných údajov}
+\label{13_ident}
+\end{figure}
+Os x predstavuje čas v sekundách a y predstavuje výstup systému. Pomocou modelu arx sa získala nasledovná prenosová funkcia
+
+\begin{equation} \label{eq38}
+\begin{split}
+Gp(z) = \ \frac{Y(z)}{U(z)}
+\end{split}
+\end{equation}
+
+kde
+\begin{equation} \label{eq39}
+\begin{split}
+\text{\ Y}\left( z \right) = 2.085z^{- 1} + 0.3692z^{- 2} \\
+U\left( z \right) = 1 - 0.99{13z}^{- 1} + 1.287 \times 10^{- 3}z^{- 2}
+\end{split}
+\end{equation}
+Perióda vzorkovania je \(T_{s} = 0.25\).
+
+Navrhnutý algoritmus bol otestovaný na reálnom systéme s~prenosovou
+funkciou \ref{eq39}. Parametre simulácie sú zobrazene na obrázku \ref{15_paramt}. Časové odozvy systému s~MPC regulátorom sú
+na obrázku \ref{14_simt}. Konkrétne časová odozva výstupu, v~tomto prípade
+výkon motora, meraný v~rps (otáčky za sekundu) je zobrazený vo vrchnom
+grafe. Vstup systému, uhol náklonu plynovej klapky meraný v~stupňoch je
+v~strednom grafe a~zmena vstupu v~spodnom grafe. Všetky spomenuté
+veličiny majú v~grafe modrú farbu. Zelená farba vo vrchnom grafe
+predstavuje referenčný signál a~červené čiarkované čiary sú obmedzenia.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{14_simt.png}
+\caption{Časové odozvy rýchlosti motora (v jednotkách rps) s MPC regulátorom}
+\label{14_simt}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{15_paramt.png}
+\caption{Parametre simulácie}
+\label{15_paramt}
+\end{figure}
+
+renosová funkcia \ref{eq39} sa zadala do grafického rozhrania do pola
+„transfer function``. Horizont predikcie bol nastavený na 10 vzoriek
+dopredu. Zo simulácii vyplýva, že je to dostatočné a~efektívne, berúc do
+úvahy odozvu systému a~kvalitu riadenia. Váhy boli nastavené na
+prednastavené hodnoty. Obmedzenia algoritmu sú
+
+\begin{itemize}
+\item
+  Na vstup 0-60 stupňov.
+\item
+  Zmena vstupu -60 -- 60 stupňov.
+\item
+  Výstup systému 0 -- 500 rps (30~000 rpm)
+\end{itemize}
+
+Referenčný signál je nastavený na hodnotu 283.35 rps v~čase 0. Po 5
+sekundách je nastavený na hodnotu 450 rps.
+
+Z~výsledkov je možné vidieť výhody prediktívneho riadenia. Keďže
+prediktívny regulátor je založený na optimalizácii, je možné vidieť
+minimálne akčné zásahy, čo môže viesť k~úspore spotreby.\cite{MPC08}
