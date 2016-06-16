@@ -777,9 +777,52 @@ a spojitá kvadratická funkcia
 Týmto sa presunula numerická výpočtová náročnosť optimalizácie \ref{eq13} k~off-line výpočtom. V~priebehu riadenia stačí identifikovať región CR\textsubscript{i}, obsahujúci aktuálny stav x(t) a~aplikovať príslušný
 zákon riadenia \label{eq36}. \cite{MPC05} \\
 Takýmto spôsobom je možné rozdeliť výpočtovú zložitosť na dve časti. Prvá, výpočtovo zložitejšia, časť je hľadanie kritických regiónov, ktorá sa môže uskutočniť pred zavedením regulátora do behu. Tuto nie je čas kritický, pretože regulačný proces nebeží. Druhá časť je počas behu regulačného procesu. Tá predstavuje časovo nenáročnú operáciu vyhľadania kritického regiónu v pamäti a podľa neho vrátiť akčný zásah. Hlavná nevýhoda offline - explicitného riešenia je, že systém je jednorázovo daný a už počas behu nevstupuje do výpočtu na rozdiel od online riešenia, kde do každého kroku matematický model systému vstupuje a teda je možné  matematický model dynamicky adaptovať, aby čo najviac zodpovedal reálnemu systému. Pri voľbe spôsobu implementácie praktickej časti pre výučbu aj neskôr v IoT prostredí, tento fakt zavážil a zvolila sa online metóda implementácie.
+\subsection{Popis funkčnosti On-line MPC algoritmu}
+Vytvorený algoritmus sa skladá skladá z viacerých modulov - funkcií naprogramovaných v prostredí Matlab a prispôsobených na fungovanie v open source verzii Octave. Programbol vytvorený pre účely využitia v pedagogickom procese grafické rozhranie bolo vytvorené pomocou komponent Matlabu - Guide, ktorý slúži práve na vytváranie grafických rozhraní. Základné komponenty, z ktorých sa program a  skladá sú znázornené na obrázku \ref{16_com}.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{16_com.png}
+\caption{Základné komponenty}
+\label{16_com}
+\end{figure}
 
-\subsection{Overenie On-line MPC algoritmu}
-Po teoretickom základe nasleduje overenie regulátora v programe, ktorý bol vytvorený pre účely využitia v pedagogickom procese v prostredí Matlab a jeho súčasti Guide. Guide slúži na vytváranie grafických rozhraní. Grafické rozhranie vytvoreného programu je znázornené na obrázku \ref{08_gui} 
+\begin{enumerate}
+  \item
+    Používateľské rozhranie je popísane v kapitole \ref{mpcprogram}
+  \item
+    Spracovanie vstupov zabezpečí správnu konverziu reťazcov na čísla a výsledné čísla priradí do správnych premenných potrebných na vstupe do ďalšej časti.
+  \item
+    MPC regulátor pre svoje fungovanie vždy potrebuje mať na vstupe   matematický model systému podľa rovnice \ref{eq1}, ktorý sa označuje ako systém zadaný v stavovom priestore. Táto časť zabezpečí konverziu z prenosovej funkcie na stavový priestor.
+  \item
+   Nasleduje výpočet matíc H, F, Y podľa rovníc \ref{eq11}, ktoré sú produktom matíc A, B, C z rovnice \ref{eq1} a váhových matíc, Q, $Q_n$ a R z rovnice \ref{eq11}, ktoré si používateľ volí.
+   \item
+   Následne prebieha simulácia, ktorej komponenty sú znázornené na obrázku \ref{17_dsim} a popísane nižšie.
+   \item
+   Produktom simulácie sú dáta, ktoré vytvoria grafy časových odoziev popísaných v kapitole \ref{mpcprogram}.
+\end{enumerate}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.1\textwidth]{17_dsim.png}
+\caption{Detail komponentu simulácia}
+\label{17_dsim}
+\end{figure}
+\begin{enumerate}
+  \item
+	Počas inicializácie simulácie sa pripravuje referenčný signál, počiatočný stav systému a počet krokov simulácie.
+  \item
+    Počet krokov simulácie je nastavený na podiel času simulácie a periódy vzorkovania.
+  \item
+    V prvej fáze simulačného cyklu sa prepočítajú obmedzenia systému podľa rovnice \ref{eq19}.
+  \item 
+    Následne prebehne samotná optimalizácia spustením Matlab súčasti \textit{quadprog}, prípade Octave súčasti \textit{qp}. Bez obmedzení by to bol výpočet podľa rovnice \ref{eq13} spomenuté súčasti kvadratického programovania k tomu pridajú sústavu obmedzení.
+  \item
+    Po optimalizácii sa vyberie prvý akčný zásah z vektora akčných zásahov, ktorý má dĺžku horizontu predikcie, čo je vlastne výsledok optimalizácie. Keďže v programe beží simulačný cyklus tak sa vypočíta výstup, a stav, ktoré sa zapamätajú a následne začína ďalší krok simulačného cyklu.
+\end{enumerate}
+
+
+\subsection{Overenie On-line MPC algoritmu} \label{mpcprogram}
+Po teoretickom základe a popise vytvoreného algoritmu nasleduje popis grafického rozhrania a jeho overenie. Grafické rozhranie vytvoreného programu je znázornené na obrázku \ref{08_gui} 
 
 \begin{figure}[h]
 \centering
@@ -906,15 +949,15 @@ Nie je tu porovnanie voči iným regulátorom, pretože to nie je zámerom tejto
 \caption{Ukážka vplyvu obmedzenia zmeny riadiaceho zásahu na časový priebeh riadiaceho zásahu.}
 \end{figure}
 
-Na základe týchto experimentov sa potvrdzujú výhody MPC regulátora, ktoré boli spomenuté v úvode ohľadne jednoduchosti zavedenia obmedzení. V tomto sa MPC viac blíži k reálnym systémom ako iné regulátory napr. PID, kde sa obmedzenia akčného zásahu musí špeciálne riešiť.
+Na základe týchto experimentov sa potvrdzujú výhody MPC regulátora, ktoré boli spomenuté v úvode ohľadne jednoduchosti zavedenia obmedzení. V tomto má MPC bližšie spojenie s reálnym systémom ako iné regulátory napr. PID, kde sa obmedzenie akčného zásahu musí špeciálne riešiť.
 
 Ďalší nástroj na overenie MPC algoritmu je voľne stiahnuteľný
 a~použiteľný v~prostredí Matlab. Názov je MPT toolbox. Je to dielo
 inštitútu pre automatizáciu vo Švajčiarsku. Tento program je jeden
-z~najpouživanejších v~prostredí Matlab.
+z~najpouživanejších v~prostredí Matlab. Nasleduje overenie algoritmu na reálnom systéme z praxe, ktorý je popísaný v nasledujúcej podkapitole. Následne je identifikovaný matematický model systému a overenie funkčnosti MPC princípov. Treba spomenúť, že overenie je stále prostredníctvom simulácie v prostredí Matlab.
 
 \subsubsection{Popis systému riadenia plynovej turbíny}
-Turbína s~výkonom 1,5MW obsahuje tri hlavné časti, menovite, kompresor,
+Turbína s~výkonom 1.5MW obsahuje tri hlavné časti, menovite, kompresor,
 spaľovaciu komorou a~vysokotlakovú turbínu. V~rokoch 1950 bolo
 priemyselné využitie turbín významne rozšírené, kvôli jej nespočetným
 výhodám. Napríklad neprítomnosť častí, ktoré by sa o~seba odierali,
@@ -1021,4 +1064,39 @@ sekundách je nastavený na hodnotu 450 rps.
 
 Z~výsledkov je možné vidieť výhody prediktívneho riadenia. Keďže
 prediktívny regulátor je založený na optimalizácii, je možné vidieť
-minimálne akčné zásahy, čo môže viesť k~úspore spotreby.\cite{MPC08}
+minimálne akčné zásahy, čo môže viesť k~úspore spotreby.\cite{MPC08}\\
+Týmto končí simulačné overovanie algoritmu MPC regulátora vytvoreného na základe teoretických princípov popísaných v úvodných kapitolách MPC regulátora a nasleduje druhá časť práce, ktorá pripraví podklady pre praktický experiment.
+
+\section{Softvérová Architektúra}
+Téma softvérovej architektúry (Software architectrue) zahŕňa veľa súčastí. Práca sa zameriava len na tie časti, ktoré vedú do problematiky internetu vecí a teda nepojednáva o všetkých aspektoch tejto problematiky. Na začiatok niekoľko definícií.\\
+\\ident 
+Softvérová architektúra je proces definovania štrukturovaného riešenia, ktoré spĺňa všetky technické a operačné požiadavky, zatiaľ čo optimalizuje bežné kvalitatívne vlastnosti ako je výkonnosť, bezpečnosť a ovládateľnosť. Zahŕňa rad rozhodnutí, ktoré sú založené na viacerých faktoroch a každé z týchto rozhodnutí môže mať značný dopad na kvalitu, výkonnosť, udržiavanie a celkový úspech aplikácie.\\
+\indent Philippe Kruchten, Grady Booch, Kurt Bittner a Rich Reitman odvodili a vylepšili definíciu architektúry, ktorá vychádza z práce Mary Shaw a David Garlan (Shaw and Garlan 1996). Ich definícia je:\\
+\indent Softvérová architektúra zahŕňa sadu dôležitých rozhodnutí o usporiadaní softvérového systému vrátane voľby stavebných prvkov a ich rozhraní, pomocou ktorých je systém zložený. Správanie, ktoré je definované v spolupráci medzi uvedenými prvkami. Spájanie týchto štrukturálnych a behaviorálnych elementov do rozsiahlejších subsystémov a architektonický štýl, ktorý vedie toto usporiadanie. Softvérová architektúra tiež zahŕňa starosť o funkcionalitu, použiteľnosť, pružnosť, výkonnosť, možnosť znovu použitia, zrozumiteľnosť, kompromisy na ekonomické a technologické obmedzenia a tiež estetickosť. \cite{IOT02}
+
+Dôležité si je uvedomiť, že softvérová architektúra je prostriedok na vytvorenie softvérového systému avšak softvérový systém je stále len prostriedok na dosiahnutie určitého cieľa. 
+
+\indent Systémy by mali byť navrhované s prihliadaním na používateľa, systém (IT infraštruktúra) a biznis ciele. Pre každú z týchto oblastí by mal byť načrtnutý kľúčový scenár a identifikované dôležité kvalitatívne vlastnosti (napríklad spoľahlivosť a škálovateľnosť) a kľúčové oblasti uspokojenia alebo neuspokojenia. Vytvoriť metriky a prihliadať na ne pri meraní úspechu v každej z oblasti, všade kde je to možné.
+\cite{IOT02}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.3\textwidth]{18_arch.png}
+\caption{Oblasti, potrebné zvažovať pri návrhu\cite{IOT02}}
+\label{18_arch}
+\end{figure}
+
+
+\indent Rovnako ako pri iných zložitých štruktúrach, softvér musí byť postavený na pevnom základe. Ak sa nezoberú do úvahy, kľúčové scenáre, konštrukcia bežných problémov, ohodnotenie dlhodobých dôsledkov kľúčových rozhodnutí, aplikácia môže byť vystavená riziku. Moderné nástroje a platformy pomáhajú zjednodušiť úlohy poskladania aplikácii, ale stále nenahrádzajú dôsledný návrh aplikácie, ktorý je založený na špecifických scenároch a požiadavkách. Riziká, ktoré hrozia zlým návrhom architektúry sú nestabilný softvér, softvér nepodporujúci existujúce alebo budúce biznis požiadavky alebo je ťažké ho nasadiť alebo spravovať v produkčnom prostredí.\\
+
+
+\subsubsection{Web aplikácie}
+
+\subsection{Internet vecí - IoT}
+TODO: Definícia
+TODO: 3 súčasti
+TODO: Inteligentná budova
+\subsection{Porovnanie}
+\subsubsection{Návrh}
+\subsubsection{Vývoj}
+\subsubsection{Údržba}
