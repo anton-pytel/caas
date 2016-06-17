@@ -1068,16 +1068,17 @@ minimálne akčné zásahy, čo môže viesť k~úspore spotreby.\cite{MPC08}\\
 Týmto končí simulačné overovanie algoritmu MPC regulátora vytvoreného na základe teoretických princípov popísaných v úvodných kapitolách MPC regulátora a nasleduje druhá časť práce, ktorá pripraví podklady pre praktický experiment.
 
 \section{Softvérová Architektúra}
-Téma softvérovej architektúry (Software architectrue) zahŕňa veľa súčastí. Práca sa zameriava len na tie časti, ktoré vedú do problematiky internetu vecí a teda nepojednáva o všetkých aspektoch tejto problematiky. Na začiatok niekoľko definícií.\\
+Téma softvérovej architektúry (Software architectrue) zahŕňa veľa súčastí. Práca sa zameriava len na tie časti, ktoré vedú do problematiky internetu vecí a teda nepojednáva o všetkých aspektoch tejto problematiky. Nasleduje niekoľko definícií a vymenovanie typov aplikácii. 
 
-\indent Softvérová architektúra je proces definovania štrukturovaného riešenia, ktoré spĺňa všetky technické a operačné požiadavky, zatiaľ čo optimalizuje bežné kvalitatívne vlastnosti ako je výkonnosť, bezpečnosť a ovládateľnosť. Zahŕňa rad rozhodnutí, ktoré sú založené na viacerých faktoroch a každé z týchto rozhodnutí môže mať značný dopad na kvalitu, výkonnosť, udržiavanie a celkový úspech aplikácie.\\
+\indent Softvérová architektúra je proces definovania štrukturovaného riešenia, ktoré spĺňa všetky technické a operačné požiadavky, zatiaľ čo optimalizuje bežné kvalitatívne vlastnosti ako je výkonnosť, bezpečnosť a ovládateľnosť. Zahŕňa rad rozhodnutí, ktoré sú založené na viacerých faktoroch a každé z týchto rozhodnutí môže mať značný dopad na kvalitu, výkonnosť, udržiavanie a celkový úspech aplikácie.
+
 \indent Philippe Kruchten, Grady Booch, Kurt Bittner a Rich Reitman odvodili a vylepšili definíciu architektúry, ktorá vychádza z práce Mary Shaw a David Garlan (Shaw and Garlan 1996). Ich definícia je:
 
-\indent Softvérová architektúra zahŕňa sadu dôležitých rozhodnutí o usporiadaní softvérového systému vrátane voľby stavebných prvkov a ich rozhraní, pomocou ktorých je systém zložený. Správanie, ktoré je definované v spolupráci medzi uvedenými prvkami. Spájanie týchto štrukturálnych a behaviorálnych elementov do rozsiahlejších subsystémov a architektonický štýl, ktorý vedie toto usporiadanie. Softvérová architektúra tiež zahŕňa starosť o funkcionalitu, použiteľnosť, pružnosť, výkonnosť, možnosť znovu použitia, zrozumiteľnosť, kompromisy na ekonomické a technologické obmedzenia a tiež estetickosť. \cite{IOT02}
+\indent Softvérová architektúra zahŕňa sadu dôležitých rozhodnutí o usporiadaní softvérového systému vrátane voľby stavebných prvkov a ich rozhraní, pomocou ktorých je systém zložený. Rozhodnutie o voľbe správania, ktoré je definované spoluprácou medzi uvedenými prvkami. Rozhodnutie o spájaní týchto štrukturálnych a behaviorálnych elementov do rozsiahlejších subsystémov a voľba architektonického štýlu, ktorý vedie toto usporiadanie. Softvérová architektúra tiež zahŕňa starosť o funkcionalitu, použiteľnosť, pružnosť, výkonnosť, možnosť znovu použitia, zrozumiteľnosť, kompromisy na ekonomické a technologické obmedzenia a tiež estetickosť. \cite{IOT02}
 
-Dôležité si je uvedomiť, že softvérová architektúra je prostriedok na vytvorenie softvérového systému avšak softvérový systém je stále len prostriedok na dosiahnutie určitého cieľa.
+\indent Dôležité si je uvedomiť, že softvérová architektúra je prostriedok na vytvorenie softvérového systému avšak softvérový systém je stále len prostriedok na dosiahnutie určitého cieľa.
 
-\indent Systémy by mali byť navrhované s prihliadaním na používateľa, systém (IT infraštruktúra) a biznis ciele, ako je zobrazené na obrázku \ref{18_arch}. Pre každú z týchto oblastí by mal byť načrtnutý kľúčový scenár a identifikované dôležité kvalitatívne vlastnosti (napríklad spoľahlivosť a škálovateľnosť) a kľúčové oblasti uspokojenia alebo neuspokojenia. Vytvoriť metriky a prihliadať na ne pri meraní úspechu v každej z oblasti, všade kde je to možné.
+\indent Preto by systémy mali byť navrhované s prihliadaním na \textbf{používateľa}, \textbf{systém} (IT infraštruktúra) a \textbf{biznis ciele}, ako je zobrazené na obrázku \ref{18_arch}. Pre každú z týchto oblastí by mal byť načrtnutý kľúčový scenár a identifikované dôležité kvalitatívne vlastnosti (napríklad spoľahlivosť a škálovateľnosť) a kľúčové oblasti uspokojenia alebo neuspokojenia. Vytvoriť metriky a prihliadať na ne pri meraní úspechu v každej z oblasti, všade kde je to možné.
 \cite{IOT02}
 \begin{figure}[h]
 \centering
@@ -1085,10 +1086,44 @@ Dôležité si je uvedomiť, že softvérová architektúra je prostriedok na vy
 \caption{Oblasti, potrebné zvažovať pri návrhu\cite{IOT02}}
 \label{18_arch}
 \end{figure}
-Základné typy aplikácií podľa  článku \cite{IOT03} sú:
+
+\subsection{Základne typy architektúr}
+Jedno z kľúčových rozhodnutí je voľba typu architektúry. Tie najpoužívanejšie sú vymenované nižšie podľa článku \cite{IOT05} napísanom na základe knihy\cite{IOT08}, ktorú napísal Mark Richards - softvér architekt s 30 ročnou skúsenosťou. V článku sa tiež uvádza, že v jednom systéme môže byť použitých viacero typov, čo je  dôležitá informácia pri návrhu.
+\begin{itemize}
+ \item \textbf{ N-vrstvová architektúra.} Je to jeden z najpoužívanejších prístupov, pretože je to postavené okolo databázy a veľa aplikácií v biznise prirodzene potrebujú ukladať informácie v tabuľkách. \indent Veľa z najznámejších frameworkov ako Java EE, Drupal a Express sú postavené tak, aby mali túto štruktúru na mysli, takže aplikácie, nimi vytvorené sú automaticky N-vrstvové.
+\indent Zdrojový kód je usporiadaný tak, že dáta vstupujú na najvyššej úrovni a prepracujú sa cez každú vrstvu až dosiahnú najnižšiu, čo je zvyčajne databáza. Po ceste má každá vrstva svoju úlohu, ako kontrolovanie konzistencie dát alebo formátovanie dát, tak aby ostali konzistentné. Je bežné, že rôzny programátori pracujú nezávisle na jednotlivých vrstvách.
+\begin{figure}[h]
+\centering
+\begin{subfigure}{0.5\linewidth}
+\includegraphics[width=0.9\textwidth]{25_3l.png}
+\caption{3 vrstvová architektúra \cite{IOT07}}
+\label{25_3l}
+\end{subfigure}%
+\begin{subfigure}{0.5\linewidth}
+\includegraphics[width=0.9\textwidth]{24_4l.png}
+\caption{4 vrstvová architektúra\cite{IOT06}}
+\label{24_4l}
+\end{subfigure}
+\end{figure}
+MVC (Model-View-Controller) štruktúra, ktorú poskytuje väčšina obľúbených frameworkov je zjavne N-vrstvová architektúra. Nad databázou je model, ktorý často obsahuje biznis logiku a informácie o type dát databáze. Na vrchu je zobrazovacia vrstva, ktorá často pozostáva z CSS, JavaScript a HTML. V strede je ovládač, ktorý má viacero pravidiel a funkcií na transformáciu dát zo zobrazovacej vrstvy do modelu.
+ \item \textbf{ Architektúra riadená udalosťami.} Veľa programov trávi väčšinu času čakaním, kým sa niečo stane. Tento fakt špeciálne platí pre systémy, ktoré priamo spolupracujú  s ľuďmi, ale rovnako je to bežné aj v oblasti sietí.
+\indent Architektúra riadená udalosťami pomáha spravovať uvedené fakty tak, že sa vytvorí centrálna jednotka, ktorá prijíma dáta a potom ich deleguje do samostatných modulov, ktoré dáta spracujú. Toto odovzdanie sa nazýva vygenerovanie udalosti. Udalosť je následne spracovaná kódom tzv. event-handler.
+ \item \textbf{ ,,Microkernel`` architektúra.} Veľa aplikácií má základnú sadu operácií, ktoré sú znova a znova použité v iných prípadoch, ktoré závisia od aktuálneho typu dát a typu úlohy. Obľúbený nástroj na vývoj Eclipse, napríklad, najskôr otvorí súbory, pridá im poznámky, upraví ich a potom spustí pomocníka na pozadí. Nástroj je vykonávaním týchto operácií známy a s kódom napísaným v jazyku Java na jedno stlačenie tlačítka sa kód skompiluje a spustí.
+\indent V tomto prípade, základný program na zobrazovanie a upravovanie súboru sú súčasťou microkernel-u. Java kompilátor je extra časť, ktorá je pridaná na podporu základných čŕt microkernel-u. Ostatní vývojári vyvinuli ďalšie časti, aby bolo možné vyvíjať aj v iných jazykoch s inými kompilátormi. Často krát sa kompilátor ani nepoužíva, ale využívajú len funkcie na úpravu súborov. 
+\indent Špeciálne pridaná funkcionalita sa nazýva plug-in. Často je tento prístup nazývaný aj Plug-in architektúra.
+ \item \textbf{ ,,Microservice`` architektúra.} Softvér môže byť ako malý slon. Keď je malý je milý a zábavný, ale keď dospeje, je ťažké ho viesť a bráni sa zmene. Návrh Microservice architektúry pomáha vývojárom predísť tomu, aby sa z ich malých programov stali ťažkopádne, monolitické a neflexibilné programy. Preto na miesto vytvárania jedného veľkého programu je cieľ vytvoriť množstvo rozličných malých programov a vždy keď chce niekto pridať funkcionalitu, tak vždy pridať malý program.
+\indent Tento prístup je podobný Microkernel 
+a udalosťami riadenému prístupu, ale je používaný zvyčajne, keď rozličné úlohy sú ľahko oddeliteľné. Vo veľa prípadoch, rozličné úlohy môžu vyžadovať rôzny čas na spracovanie a môžu sa líšiť v spôsobe použitia. Napríklad servery spoločnosti Netflix, ktoré poskytujú obsah zákazníkom (filmy a videá) majú oveľa väčšiu záťaž v piatok a sobotu večer, takže musia byť pripravený zvýšiť výpočtové a sieťové kapacity. Servery, ktoré sledujú vrátenie požičaných DVD, na druhej strane, robia svoju robotu cez týždeň hneď ako pošta doručí príchodzie zásielky. Ak sa to implementuje ako oddelené služby, Netflix cloud ich môže nezávisle škálovať podľa dopytu.
+ \item \textbf{ ,,Space-based`` architektúra.} Veľa aplikácií, ktoré sú postavené okolo databázy a fungujú správne pokiaľ databáza stíha spracovávať záťaž. Keď však databáza prestane stíhať zapisovať veľa transakcií, celá aplikácia spadne.
+ \indent ,,Space-based`` architektúra je navrhnutá tak, aby predišla zlyhaniu pri veľkej záťaži rozložením spracovania a ukladania na viacero serverov. Dáta aj zodpovednosť za možnosť zavolania služby sú rozdistribuované na viacero uzlov. Niektorí architekti používajú širokejší pojem ,,cloud`` architektúra. Táto architektúra podporuje prípady, kedy je ťažké predikovať nárast požiadaviek, ktorý by databáza nestíhala spracovávať. 
+\indent Uchovávanie informácie v RAM umožňuje vykonávať veľa úloh rýchlejšie a zjednodušuje zdieľanie medzi uzlami. Avšak distribuovaná architektúra robí niektoré analýzy komplikovanejšími. Výpočet, ktorý musí prebehnúť cez všetky dáta, napríklad výpočet priemeru alebo vytváranie štatistickej analýzy musí byť rozdelený na podúlohy cez všetky uzly a keď skončia zoskupenie dát je potrebné. 
+\end{itemize}
+
+\subsection{Základné typy aplikácií}
+Ďalšie z kľúčových rozhodnutí je voľba typu aplikácie. Na výber podľa  článku \cite{IOT03} sú:
 \begin{itemize}
 \item
- \textbf{Mobilné aplikácie.} Aplikácie tohto typu môžu byť vyvíjané ako tenký alebo tučný klient. Mobilná aplikácia vo forme tučného klienta môže podporovať scenáre bez pripojenia alebo s občasným pripojením. Webové aplikácie alebo tenkí klienti podporujú iba scenáre s pripojením. Zdroje, ktorými disponujú mobilné zariadenia sa často ukazujú ako obmedzenie pri návrhu mobilných aplikácií. \\
+ \textbf{Mobilná aplikácia \ref{19_mob}.} Aplikácie tohto typu môžu byť vyvíjané ako tenký alebo tučný klient. Mobilná aplikácia vo forme tučného klienta môže podporovať scenáre bez pripojenia alebo s občasným pripojením. Webové aplikácie alebo tenkí klienti podporujú iba scenáre s pripojením. Zdroje, ktorými disponujú mobilné zariadenia sa často ukazujú ako obmedzenie pri návrhu mobilných aplikácií. \\
 Výhody: 
  \begin{itemize}
    \item  Podpora mobilných zariadení.
@@ -1102,7 +1137,7 @@ Na zváženie:
  \end{itemize}
  
 \item
- \textbf{Tučná klientská aplikácia.} Aplikácie tohto typu sú zvyčajne vyvíjané ako stand-alone aplikácie s grafickým rozhraním, ktoré zobrazuje dáta prostredníctvom rôznych ovládacích prvkov. Tuční klienti sú väčšinou navrhnutí na scenáre bez pripojenia alebo s občasným pripojením, keď potrebujú prístup k vzdialeným dátam alebo funkcionalite. \\
+ \textbf{Tučná klientská aplikácia \ref{20_cli}.} Aplikácie tohto typu sú zvyčajne vyvíjané ako stand-alone aplikácie s grafickým rozhraním, ktoré zobrazuje dáta prostredníctvom rôznych ovládacích prvkov. Tuční klienti sú väčšinou navrhnutí na scenáre bez pripojenia alebo s občasným pripojením, keď potrebujú prístup k vzdialeným dátam alebo funkcionalite. \\
 Výhody: 
  \begin{itemize}
    \item  Možnosť využívať zdroje klienta.
@@ -1116,10 +1151,25 @@ Na zváženie:
    \item Problém s nasadzovaním nových verzií v čase.   
    \item Závislé od platformy.
  \end{itemize}
- 
+
+\begin{figure}[h]
+\centering
+\begin{subfigure}{0.5\linewidth}
+\includegraphics[width=0.9\textwidth]{19_mob.png}
+\caption{Mobilná aplikácia \cite{IOT03}}
+\label{19_mob}
+\end{subfigure}%
+\begin{subfigure}{0.5\linewidth}
+\includegraphics[width=0.9\textwidth]{20_cli.png}
+\caption{Clientská aplikácia \cite{IOT03}}
+\label{20_cli}
+\end{subfigure}
+\caption{}
+\end{figure}
+
  
 \item
- \textbf{Tučná internetová aplikácia.} Aplikácie tohto typu sú vyvíjané tak, aby podporovali viacero platforiem a prehliadačov tak, že zobrazujú multimédia alebo iný grafický obsah. Tučné internetové aplikácie bežia v prehliadači, čím sú obmedzený pristupovať k niektorým zdrojom klienta. \\
+ \textbf{Tučná internetová aplikácia \ref{21_ri}.} Aplikácie tohto typu sú vyvíjané tak, aby podporovali viacero platforiem a prehliadačov tak, že zobrazujú multimédia alebo iný grafický obsah. Tučné internetové aplikácie bežia v prehliadači, čím sú obmedzený pristupovať k niektorým zdrojom klienta. \\
 Výhody: 
  \begin{itemize}
    \item  Rovnaké schopnosti užívateľského rozhrania ako tuční klienti.
@@ -1135,8 +1185,36 @@ Na zváženie:
    \item Vyžaduje mať na klientovi nasadený vhodný runtime framework.
  \end{itemize} 
  
+  \item
+  \textbf{Webová aplikácia \ref{23_web}.} Aplikácie tohoto typu zvyčajne podporujú scenáre s pripojením, podporujú viacero prehliadačov, ktoré bežia na rôznych operačných systémoch.\\
+Výhody: 
+ \begin{itemize}
+   \item Široká dostupnosť pre väčšinu platforiem a užívateľské rozhranie je vytvárané prostredníctvom štandardov.
+   \item Jednoduchosť nasadenia a správy zmien.
+ \end{itemize}
+Na zváženie: 
+ \begin{itemize}
+   \item Závislé od nepretržitého sieťového spojenia.
+   \item Komplikácie s poskytnutím bohatého (rich) užívateľského rozhrania.
+ \end{itemize}  
+ 
+\begin{figure}[h]
+\centering
+\begin{subfigure}{0.5\linewidth}
+\includegraphics[width=0.9\textwidth]{21_ri.png}
+\caption{Tučná internet aplikácia \cite{IOT03}}
+\label{21_ri}
+\end{subfigure}%
+\begin{subfigure}{0.5\linewidth}
+\includegraphics[width=0.9\textwidth]{23_web.png}
+\caption{Web aplikácia \cite{IOT03}}
+\label{23_web}
+\end{subfigure}
+\caption{}
+\end{figure}
+
  \item
-  \textbf{Servisné aplikácie.} Služby vystavujú zdieľanú biznis funkcionalitu a umožňujú klientom pristupovať k nim z lokálneho alebo vzdialeného systému. Operácie služieb sú volané prostredníctvom správ založených na XML schémach, posielaných cez transportnú vrstvu. Cieľom týchto aplikácií je dosiahnutie voľných väzieb medzi klientom a serverom. \\
+  \textbf{Servisná aplikácia \ref{22_ser}.} Služby vystavujú zdieľanú biznis funkcionalitu a umožňujú klientom pristupovať k nim z lokálneho alebo vzdialeného systému. Operácie služieb sú volané prostredníctvom správ založených na XML schémach, posielaných cez transportnú vrstvu. Cieľom týchto aplikácií je dosiahnutie voľných väzieb medzi klientom a serverom. \\
 Výhody: 
  \begin{itemize}
    \item Interakcie medzi klientom a serverom je prostredníctvom voľných väzieb.
@@ -1147,30 +1225,77 @@ Na zváženie:
  \begin{itemize}
    \item Nie je podpora pomocou užívateľského rozhrania.
    \item Závisí od sieťového pripojenia.
- \end{itemize}   
-   
-  \item
-  \textbf{Webové aplikácie.} Aplikácie tohoto typu zvyčajne podporujú scenáre s pripojením, podporujú viacero prehliadačov, ktoré bežia na rôznych operačných systémoch.\\
-Výhody: 
- \begin{itemize}
-   \item Široká dostupnosť pre väčšinu platforiem a užívateľské rozhranie je vytvárané prostredníctvom štandardov.
-   \item Jednoduchosť nasadenia a správy zmien.
- \end{itemize}
-Na zváženie: 
- \begin{itemize}
-   \item Závislé od nepretržitého sieťového spojenia.
-   \item Komplikácie s poskytnutím bohatého (rich) užívateľského rozhrania.
- \end{itemize}     
+ \end{itemize} 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.75\textwidth]{22_ser.png}
+\caption{Aplikácia poskytujúca službu \cite{IOT03}}
+\label{22_ser}
+\end{figure} 
+    
 \end{itemize}
-
-
-\subsection{Web aplikácie}
+\subsubsection{Servisný aplikácia}
+TODO: soap rest point to point (500)
 
 \subsection{Internet vecí - IoT}
-TODO: Definícia
+TODO: Definícia (1000)
+
 TODO: 3 súčasti
-TODO: Inteligentná budova
-\subsection{Porovnanie}
+senzory akcne cleny
+obrazok vrstiev
+gateway
+cloud
+
+TODO: iot azure a ine riesenia a obrazky architektury
+
+TODO: Preco automatizacia - lebo senzory, zbernice a embedded zariadenia v procesoch
+
+TODO: ale ved to uz automatizacia pozna - rozdiel  medzi existujucimi priemyselnymi rieseniami a iot
+http://electronicdesign.com/iot/iot-industrial-way
+
+\subsubsection{Oblasti využitia}
+TODO: Inteligentná budova (500)
+TODO: dalsie oblasti = obrazok oblasti + citat google
+
+\subsection{Činnosti súvisiace so softvér architektúrou}
+TODO: preco kapitola 
+TODO: architektura aplikacie zahrna tieto cinnosti (1000)
 \subsubsection{Návrh}
+TODO: nástroje UML, enterprise + pohlady
+TODO: rozdiely is a iot = aj hw design 
 \subsubsection{Vývoj}
+TODO: jazyky Java, C\#, PHP, JavaScript, Python
+TODO: Trendy angular a ine technologie na RIA a ine 
+TODO: rozdiely is a iot - pripajanie na senzory a pripajanie na Big Data
 \subsubsection{Údržba}
+TODO: ake nastroje nagios a dalsie google
+TODO: rozdiely starost o hw zariadenia
+TODO: co je continuous integration a ako zabezpecit
+
+\section{Implementácia riešenia}
+TODO: implementacia sa sklada z viacerych casti (500)
+\subsection{Popis experimentálneho IoT prostredia}
+TODO:popis
+vera 
+zbernica 
+prvky
+nevyhody vo OneNote
+
+\subsubsection{Tvorba modulov}
+TODO: plugin architektura RSS reader
+\subsection{CaaS}
+TODO: vysvetlit + doplnit motivaciu z uvodu
+\subsubsection{Implementácia}
+TODO: micro service architektura
+TODO: service aplikacia
+\subsubsection{Integrácia}
+TODO: novy modul
+\subsubsection{Experiment}
+TODO: popis zapojenia
+TODO: identifikacia
+TODO: grafy
+TODO: 
+pripad pouzitia udrziavanie intenzity
+pripad pouzitia teplota - upozornit na ekvitermiku
+pripad pouzitia
