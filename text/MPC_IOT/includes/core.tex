@@ -1123,7 +1123,7 @@ a udalosťami riadenému prístupu, ale je používaný zvyčajne, keď rozličn
 Ďalšie z kľúčových rozhodnutí je voľba typu aplikácie. Na výber podľa  článku \cite{IOT03} sú:
 \begin{itemize}
 \item
- \textbf{Mobilná aplikácia \ref{19_mob}.} Aplikácie tohto typu môžu byť vyvíjané ako tenký alebo tučný klient. Mobilná aplikácia vo forme tučného klienta môže podporovať scenáre bez pripojenia alebo s občasným pripojením. Webové aplikácie alebo tenkí klienti podporujú iba scenáre s pripojením. Zdroje, ktorými disponujú mobilné zariadenia sa často ukazujú ako obmedzenie pri návrhu mobilných aplikácií. \\
+ \textbf{Mobilná aplikácia obrázok \ref{19_mob}.} Aplikácie tohto typu môžu byť vyvíjané ako tenký alebo tučný klient. Mobilná aplikácia vo forme tučného klienta môže podporovať scenáre bez pripojenia alebo s občasným pripojením. Webové aplikácie alebo tenkí klienti podporujú iba scenáre s pripojením. Zdroje, ktorými disponujú mobilné zariadenia sa často ukazujú ako obmedzenie pri návrhu mobilných aplikácií. \\
 Výhody: 
  \begin{itemize}
    \item  Podpora mobilných zariadení.
@@ -1137,7 +1137,7 @@ Na zváženie:
  \end{itemize}
  
 \item
- \textbf{Tučná klientská aplikácia \ref{20_cli}.} Aplikácie tohto typu sú zvyčajne vyvíjané ako stand-alone aplikácie s grafickým rozhraním, ktoré zobrazuje dáta prostredníctvom rôznych ovládacích prvkov. Tuční klienti sú väčšinou navrhnutí na scenáre bez pripojenia alebo s občasným pripojením, keď potrebujú prístup k vzdialeným dátam alebo funkcionalite. \\
+ \textbf{Tučná klientská aplikácia obrázok \ref{20_cli}.} Aplikácie tohto typu sú zvyčajne vyvíjané ako stand-alone aplikácie s grafickým rozhraním, ktoré zobrazuje dáta prostredníctvom rôznych ovládacích prvkov. Tuční klienti sú väčšinou navrhnutí na scenáre bez pripojenia alebo s občasným pripojením, keď potrebujú prístup k vzdialeným dátam alebo funkcionalite. \\
 Výhody: 
  \begin{itemize}
    \item  Možnosť využívať zdroje klienta.
@@ -1169,7 +1169,7 @@ Na zváženie:
 
  
 \item
- \textbf{Tučná internetová aplikácia \ref{21_ri}.} Aplikácie tohto typu sú vyvíjané tak, aby podporovali viacero platforiem a prehliadačov tak, že zobrazujú multimédia alebo iný grafický obsah. Tučné internetové aplikácie bežia v prehliadači, čím sú obmedzený pristupovať k niektorým zdrojom klienta. \\
+ \textbf{Tučná internetová aplikácia obrázok \ref{21_ri}.} Aplikácie tohto typu sú vyvíjané tak, aby podporovali viacero platforiem a prehliadačov tak, že zobrazujú multimédia alebo iný grafický obsah. Tučné internetové aplikácie bežia v prehliadači, čím sú obmedzený pristupovať k niektorým zdrojom klienta. \\
 Výhody: 
  \begin{itemize}
    \item  Rovnaké schopnosti užívateľského rozhrania ako tuční klienti.
@@ -1186,7 +1186,7 @@ Na zváženie:
  \end{itemize} 
  
   \item
-  \textbf{Webová aplikácia \ref{23_web}.} Aplikácie tohoto typu zvyčajne podporujú scenáre s pripojením, podporujú viacero prehliadačov, ktoré bežia na rôznych operačných systémoch.\\
+  \textbf{Webová aplikácia obrázok \ref{23_web}.} Aplikácie tohoto typu zvyčajne podporujú scenáre s pripojením, podporujú viacero prehliadačov, ktoré bežia na rôznych operačných systémoch.\\
 Výhody: 
  \begin{itemize}
    \item Široká dostupnosť pre väčšinu platforiem a užívateľské rozhranie je vytvárané prostredníctvom štandardov.
@@ -1214,7 +1214,7 @@ Na zváženie:
 \end{figure}
 
  \item
-  \textbf{Servisná aplikácia \ref{22_ser}.} Služby vystavujú zdieľanú biznis funkcionalitu a umožňujú klientom pristupovať k nim z lokálneho alebo vzdialeného systému. Operácie služieb sú volané prostredníctvom správ založených na XML schémach, posielaných cez transportnú vrstvu. Cieľom týchto aplikácií je dosiahnutie voľných väzieb medzi klientom a serverom. \\
+  \textbf{Servisná aplikácia obrázok \ref{22_ser}.} Služby vystavujú zdieľanú biznis funkcionalitu a umožňujú klientom pristupovať k nim z lokálneho alebo vzdialeného systému. Operácie služieb sú volané prostredníctvom správ založených na XML schémach, posielaných cez transportnú vrstvu. Cieľom týchto aplikácií je dosiahnutie voľných väzieb medzi klientom a serverom. \\
 Výhody: 
  \begin{itemize}
    \item Interakcie medzi klientom a serverom je prostredníctvom voľných väzieb.
@@ -1235,10 +1235,70 @@ Na zváženie:
 \end{figure} 
     
 \end{itemize}
-\subsubsection{Servisný aplikácia}
-TODO: soap rest point to point (500)
-
+\subsubsection{Servisná aplikácia}
+Servisným aplikáciam je v práci venovaná samostatná kapitola, pretože v implementácii je použitý takýto typ aplikácie. Servisné aplikácie majú svoje miesto vo väčšine enterprise architektúr.  Enterprise architektúra je koncepčný návrh, ktorý definuje štruktúru a prevádzkovanie spoločnosti. Zámer enterprise architektúry je rozhodnúť ako môže organizácia najefektívnejšie dosiahnuť aktuálne a budúce ciele \cite{IOT09}. Inými slovami ide o  architektúru podnikových informačných systémov, ktoré zvyčajne pozostávajú z viacerých súčasti. Príkladom týchto súčasti môže byť:
+\begin{itemize}
+  \item  \textbf{CRM aplikácia.} Podľa APICS slovníka \cite{IOT10} je CRM definované ako úložisko a analýza informácií navrhované pre podporu predajných a marketingových rozhodnutí, na pochopenie a podporu potrieb existujúcich a potenciálnych zákazníkov. Zahŕňa správu užívateľských účtov, môže zahŕňať katalóg produktov, zadávanie objednávky, spracovanie a úpravu platieb a iné funkcie.\cite{IOT11}. Všetky, ktoré sú v definícii uvedené ako ,,môže zahŕňať``, závisí od konkrétnej implementácie, či dané funkcionality CRM obsahuje alebo nie. Pretože každá zo spomenutých funkcionalít môže byť ako samostatná servisná aplikácia. V tejto práci sú uvedené ako samostatné časti a CRM sa tu obmedzí na správu užívateľských účtov.
+  \item  \textbf{Katalóg produktov.} Na manažovanie závislosti medzi produktami a ovplyvňovanie typov zliav a teda výpočet ceny za produkty býva v podnikoch samostatná aplikácia
+ \item  \textbf{Účtovná aplikácia.} Aplikácia na vedenie účtovníctva
+ \item  \textbf{Správa majetku.} Aplikácia na správu majetku. 
+  \item  \textbf{ERP aplikácia.} (Plánovanie zdrojov v podniku je pojem používaný v priemysle pre širokú škálu činností, ktoré pomáhajú organizácii spravovať jej biznis. Dôležitý cieľ je pomôcť, aby tok informácií bol nastavený tak, že biznis rozhodnutia môžu byť robené na základe poskytnutých dát. ERP aplikácie sú robené tak, aby zbierali a zatrieďovali dáta z rôznych úrovni organizácie a poskytovali tak manažmentu náhľad na kľúčové ukazovatele výkonnosti tzv. KPIs v reálnom čase.\cite{IOT12} 
+\end{itemize} 
+Súčastí môže byť samozrejme viac a každá organizácia si podľa svojich potrieb vyberá tie  súčasti, ktoré potrebuje. Väčšina spomenutých súčasti je dodávaná ako servisná aplikácia. Aplikácie medzi sebou môžu komunikovať prostredníctvom vystavených rozhraní. Pri malom počte vystavených rozhraní sa často používa \textbf{Point to Point \ref{26_p2p}} architektúra, kedy neexistuje centrálny bod vystavenia služby, ale ak ktorákoľvek aplikácia potrebuje zavolať inú, tak ju priamo zavolá. Takýto prístup je však krátkozraký, lebo prax ukazuje, že počet vystavených služieb časom vždy pribúda, preto je dnes rozšírené použivať tzv. SOA - \textbf{Service oriented architektúru \ref{27_soa}} s centrálnym bodom vystavovania služieb tzv. ESB - Enterprise service bus.
+\begin{figure}[h]
+\centering
+\begin{subfigure}{0.5\linewidth}
+\includegraphics[width=0.8\textwidth]{26_p2p.png}
+\caption{Point to Point \cite{IOT13}}
+\label{26_p2p}
+\end{subfigure}%
+\begin{subfigure}{0.5\linewidth}
+\includegraphics[width=1.1\textwidth]{27_soa.png}
+\caption{SOA \cite{IOT13}}
+\label{27_soa}
+\end{subfigure}
+\end{figure}
+Existuje viacero spôsobov ako SOA implementovať. 
+\begin{itemize}
+ \item Najznámejší spôsob implementácie SOA, ktorí dnes používa väčšina užívateľov informačných technológií je implementácia protokolu WWW - \textbf{World Wide Web} v skratke často označovaný len WEB. 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.75\textwidth]{28_web.png}
+\caption{WWW \cite{IOT14}}
+\label{28_web}
+\end{figure} 
+Obrázok \ref{28_web} znázorňuje princíp fungovania. Prehliadač (web browser) je v pozícii klienta, konzumera služby, ktorú poskytuje Web Server. Web Server je označenie takého počítača, na ktorom beží servisná aplikácia, ktorá vie na základe definovaných pravidiel poskytnúť požadovaný obsah. Najpoužívanejšie aplikácie, ktoré z počítača spravia web server,  v čase písania práce, z prieskumu robenom vo februári 2016 \cite{IOT15} sú Apache, Nginx, Microsoft IIS. Ich preferencie striedavo kolíšu podľa úspechu najnovších verzií. Pod službou sa v tomto prípade rozumie poskytnutie HTML dokumentu prostredníctvom aplikačného komunikačného protokolu HTTP.
+\item Ďalší rozšírený protokol, ktorý implementuje SOA architektúru je \textbf{protokol SOAP}. Princíp fungovania je na obrázku \ref{29_soap}.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.75\textwidth]{29_soap.png}
+\caption{SOAP \cite{IOT14}}
+\label{29_soap}
+\end{figure} 
+Klient je v tomto prípade generickejší. Zvyčajne je to aplikácia, ktorá má XML parser (prekladač) a schopnosť komunikovať po sieti HTTP protokolom. Rovnako server je generickejší. SOAP je v tomto prípade pre server ,,len`` príručka ako službu vystaviť. Pod službou sa rozumie vystavenie RPC (remote procedure call), čo znamená umožnenie volania vzdialenej procedúry. Čo bude procedúra robiť je plne v rukách programátora. Aj v SOAP je pre transportnú vrstvu použitý HTTP protokol, obsahom správ sú XML objekty so špecifickým tvarom, ktorý SOAP definuje. Postup komunikácie je taký, že klient vytvorí XML objekt v ktorom definuje vstupné parametre do volania vzdialenej procedúry odošle požiadavku, na serveri sa vykoná procedúra a do odpovede sa pošle výsledok spracovania vzdialenej procedúry vo forme XML objektu, ktorý klient spracuje a na základe toho vie ako volanie dopadlo. 
+Medzi najväčšie výhody tohto protokolu patrí možnosť striktnej validácie správnosti formátu správ, ktoré si klient a server vymieňajú. Formát správ a operácie, ktoré server poskytuje sú zadefinované vo WSDL dokumente. 
+ \item Ostatná implementácia SOA architektúry uvádzaná v tejto práci je \textbf{architektonický štýl REST}. Možností samozrejme existuje viacero, ale ako bolo na začiatku tejto kapitoly uvedené, cieľom je pripraviť podklad pre vysvetlenie Internetu vecí. REST je skratka od REpresentational State Transfer. Ako je možné vidieť na obrázku \ref{30_rest} aj tu vystupuje generický klient a generický server ako v prípade SOAP protokolu.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.75\textwidth]{30_rest.png}
+\caption{REST \cite{IOT14}}
+\label{30_rest}
+\end{figure} 
+Základný rozdiel oproti SOAP je, že HTTP je využívaný nie len ako transportný protokol, ale ako aplikačný protokol, takže sa využíva celý jeho potenciál. V praxi to znamená, že operácie, ktoré server poskytuje sú unifikované HTTP protokolom a nie je nutné, aby ich klient vyťahoval z WSDL dokumentu. Ďalšia výhoda, že HTTP je využívaný ako aplikačný protokol je, možnosť definovania aký obsah server pošle. Nie je teda obmedzenie na XML dokumenty, ale je možnosť posielať JSON objekty, binárne objekty a všetky ostatné typy správ podporované HTTP protokolom. Z uvedeného tiež vyplýva, že klientom môže byť samotný prehliadač respektíve implementácia klienta sa značne zjednodušuje. Možnosť posielať JSON objekty tiež napomáha zjednodušeniu klienta, ktorý, ak sa hovorí o web aplikácii, je zvyčajne napísaný v jazyku Javascript. Takže preklad posielanej správy na dátový typ klienta je priamočiary, bez používania ďalšieho prekladača. 
+\end{itemize}
+Kvôli uvedeným vlastnostiam je používanie REST rozhrania s JSON objektom ako formátom správ rozšírené pri tvorbe servisnej aplikácie, ktorá poskytuje rozhranie pre webovú aplikáciu. Okrem využívania servisných aplikácii v enterprise architektúrach podnikov je tento typ vo veľkom využívaný aj v IoT prostredí. Preto sa pri implementácii zvolil takýto typ rozhrania.
 \subsection{Internet vecí - IoT}
+Organizácia IEEE vydala celý dokument  s názvom ,,Smerom k definícii Internetu vecí``. Cieľom dokumentu je podať plnohodnotná definíciu IoT v rozmedzí od malých lokálnych systémov obmedzených na konkrétnu lokalitu až po globálny systém, ktorý je distribuovaný a poskladaný z komplexných systémov. V dokumente je možnosť nájsť prehľad základných požiadaviek na architektúru IoT \cite{IOT16}.
+Podľa spoločnosti Gartner, ktorá je svetový líder v oblasti výskumu informačných technológií je IoT sieť fyzických objektov, ktoré majú vstavanú technológiu na komunikovanie a snímanie alebo interakciu s ich vnútornými stavmi alebo vonkajším prostredím \cite{IOT17}. 
+Ešte definícia podľa stránky Techopedia: IoT je koncept, ktorý popisuje budúcnosť, kde každodenné fyzické objekty budú pripojené do internetu a budú sa vedieť sami identifikovať iným zariadeniam. Pojem je úzko spojený s RFID technológiou ako spôsobom komunikácie, aj keď to môže zahŕňať iné technológie na snímanie, bezdrôtové technológie alebo QR kódy.
+\indent IoT je významné, pretože ak objekt sa vie sám digitálne reprezentovať stáva sa z neho niečo viac ako objekt samotný. Objekt sa už nevzťahuje len na nás, ale je spojený s okolitými objektami a dátami v databázach. Keď veľa objektov spolupracuje, je možné to nazvať ako inteligencia okolitého prostredia ,,ambient intelligence`` \cite{IOT18}.
+Viacero ďalších technologických spoločností majú ich definíciu. Cieľom tejto práce nie vytvoriť ďalšiu definíciu, ale identifikovať spoločné črty väčšiny definícií. 
+\begin{itemize}
+ \item Prvá základná črta definícii je, že v nej vystupujú objekty, ktoré môžu \textbf{snímať a ovplyvňovať okolie}. Na dosiahnutie tejto črty je potrebné, aby objekty mali senzory a akčné členy, čo je jeden z hlavných záujmov odboru automatizácia, pre ktorý to nie je nič nové.    Dostupnosť a klesajúca cena snímačov a akčných členov umožňuje ich umiestňovanie aj na objekty mimo priemyslu, čo otvára priestor pre Internet vecí. 
+ \item Druhá základná črta definícii je \textbf{prepojenie}. Opäť v automatizácii a priemysle to nie je nič nové, veď koľko priemyselných štandardov rieši prepojenie senzorov a akčných členov na výrobných linkách po celom svete. Hnacou silou rozvíjajúceho sa Internetu vecí sú nové možnosti drôtového a bezdrôtového pripojenia dostupné pre koncových používateľov, klesajúce náklady na prevádzku sietí a klesajúca cena zariadení, ktoré umožňujú zber a posielanie dát do dátových centier nazývaných - edge device, gateway alebo agregátor.
+ \item Ďalšia spoločná črta je vyústením dvoch predošlých a to \textbf{vytváranie inteligentného prostredia}. Keď bežné objekty vedia snímať rôzne fyzikálne veličiny, zosnímané hodnoty prostredníctvom pripojenia  môžu poslať prostredníctvom agregátora do dátového centra, v dátovom centre sú hodnoty zoskupené a pripravené na urobenie analýz a štatistík, na základe ktorých, ak je možné robiť rozhodnutia v reálnom čase alebo kvázi reálnom čase, tak je spätne možnosť ovplyvniť akčný člen, čo vo veľkom môže znamenať vytvorenie inteligentného prostredia. Zabezpečenie tejto črty je predmetom oblasti ukladania a spracovania dát. V tomto bode sa IoT často spája s pojmom Big Data. Definícia tohto pojmu má viacero verzií podobne ako definícia IoT. 
+\end{itemize}
+
 TODO: Definícia (1000)
 
 TODO: 3 súčasti
@@ -1272,6 +1332,7 @@ TODO: rozdiely is a iot - pripajanie na senzory a pripajanie na Big Data
 TODO: ake nastroje nagios a dalsie google
 TODO: rozdiely starost o hw zariadenia
 TODO: co je continuous integration a ako zabezpecit
+
 
 \section{Implementácia riešenia}
 TODO: implementacia sa sklada z viacerych casti (500)
