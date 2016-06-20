@@ -1296,25 +1296,95 @@ Viacero ďalších technologických spoločností majú ich definíciu. Cieľom 
 \begin{itemize}
  \item Prvá základná črta definícii je, že v nej vystupujú objekty, ktoré môžu \textbf{snímať a ovplyvňovať okolie}. Na dosiahnutie tejto črty je potrebné, aby objekty mali senzory a akčné členy, čo je jeden z hlavných záujmov odboru automatizácia, pre ktorý to nie je nič nové.    Dostupnosť a klesajúca cena snímačov a akčných členov umožňuje ich umiestňovanie aj na objekty mimo priemyslu, čo otvára priestor pre Internet vecí. 
  \item Druhá základná črta definícii je \textbf{prepojenie}. Opäť v automatizácii a priemysle to nie je nič nové, veď koľko priemyselných štandardov rieši prepojenie senzorov a akčných členov na výrobných linkách po celom svete. Hnacou silou rozvíjajúceho sa Internetu vecí sú nové možnosti drôtového a bezdrôtového pripojenia dostupné pre koncových používateľov, klesajúce náklady na prevádzku sietí a klesajúca cena zariadení, ktoré umožňujú zber a posielanie dát do dátových centier nazývaných - edge device, gateway alebo agregátor.
- \item Ďalšia spoločná črta je vyústením dvoch predošlých a to \textbf{vytváranie inteligentného prostredia}. Keď bežné objekty vedia snímať rôzne fyzikálne veličiny, zosnímané hodnoty prostredníctvom pripojenia  môžu poslať prostredníctvom agregátora do dátového centra, v dátovom centre sú hodnoty zoskupené a pripravené na urobenie analýz a štatistík, na základe ktorých, ak je možné robiť rozhodnutia v reálnom čase alebo kvázi reálnom čase, tak je spätne možnosť ovplyvniť akčný člen, čo vo veľkom môže znamenať vytvorenie inteligentného prostredia. Zabezpečenie tejto črty je predmetom oblasti ukladania a spracovania dát. V tomto bode sa IoT často spája s pojmom Big Data. Definícia tohto pojmu má viacero verzií podobne ako definícia IoT. 
+ \item Ďalšia spoločná črta je vyústením dvoch predošlých a to \textbf{vytváranie inteligentného prostredia}. Keď bežné objekty vedia snímať rôzne fyzikálne veličiny, zosnímané hodnoty prostredníctvom pripojenia  môžu poslať prostredníctvom agregátora do dátového centra, v dátovom centre sú hodnoty zoskupené a pripravené na urobenie analýz a štatistík, na základe ktorých, ak je možné robiť rozhodnutia v reálnom čase alebo kvázi reálnom čase, tak je spätne možnosť ovplyvniť akčný člen, čo vo veľkom môže znamenať vytvorenie inteligentného prostredia. Zabezpečenie tejto črty je predmetom oblasti ukladania a spracovania dát. V tomto bode sa IoT často spája s pojmom Big Data. Definícia tohto pojmu má viacero verzií podobne ako definícia IoT. Zvolila sa aspoň jedna od spoločnosti Gartner pre ilustráciu. Big data sú informácie veľkého objemu, veľkej rýchlosti a/alebo veľkej variability, ktoré si vyžadujú rentabilné, inovatívne formy spracovania informácii, ktoré umožňujú väčší náhľad, napomáhať rozhodovaniu a automatizácii procesov \cite{IOT19}.
+\end{itemize}
+Zhrnutie technológii, ktoré môže IoT zhŕňať je ďalej na obrázku \ref{31_iot}.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.99\textwidth]{31_iot.png}
+\caption{IoT súhrn techológií \cite{IOT20}}
+\label{31_iot}
+\end{figure} 
+V čom sa IoT líši od tradičnej architektúry priemyselných systémov je znázornené na obrázkoch \ref{32_iotA} a \ref{32_iotB}.
+
+\begin{figure}[h]
+\centering
+\begin{subfigure}{0.5\linewidth}
+\includegraphics[width=0.9\textwidth]{32_iotA.png}
+\caption{Tradičná architektúra \cite{IOT21}}
+\label{32_iotA}
+\end{subfigure}%
+\begin{subfigure}{0.5\linewidth}
+\includegraphics[width=0.9\textwidth]{32_iotB.png}
+\caption{IoT architektúra \cite{IOT21}}
+\label{32_iotB}
+\end{subfigure}
+\caption{}
+\end{figure}
+Tradičná priemyselná architektúra jednoducho používa vstavaný softvér na platforme obslužných technológií (Operational Technology - OT) na posunutie dát do platformy informačných technológií (Information Technology - IT), ktorá vie robiť, analýzu dát, poskytovať ich používateľovi aj vystavovať do cloud prostredia. IoT architektúra posúva väčšiu časť inteligencie systému z IT strany do OT strany. Toto umožňujú mikroprocesory a vstavané platformy s jednoduchým prístupom do cloud prostredia a rovnako s jednoduchým prístupom ku autorizovaným zariadeniam a používateľom. \cite{IOT21}. 
+\indent Základné ciele IoT architektúr je zosnímané dáta čo najskôr, najbezpečnejšie a najspoľahlivejšie poslať ďalej na miesto, kde môžu prejsť analýzou, či už je to cloud alebo dosť často to býva aj samotný agregátor, ktorý má dostatočný výkon na určitý druh analýz a na základe analýzy ovplyvniť akčné členy, aby sa optimalizoval proces, náklady, zdroje atď. Veľké firmy typu Microsoft, Amazon, HP pripravili svoje platformy, ktoré sa líšia v použitých technológiách, ale princíp ostáva rovnaký. Na demonštráciu sa uvádza porovnanie dvoch hotových platforiem Azure IOT HUB od Microsoft a AWS IOT od Amazonu v tabuľke \ref{table:1} a na obrázku \ref{33_aa}.
+\begin{table}[h!]
+\centering
+ \caption{Porovnanie dvoch IOT platforiem \cite{IOT22} }
+ \begin{tabular}{ |p{4cm}|p{5.5cm}p{5.5cm}| } 
+ \hline
+ Produkty & MS AZURE IOT HUB & AMAZON AWS IOT \\ 
+ \hline\hline
+ Protokoly & HTTP, AMQP, MQTT, vlastné protokoly & HTTP, MQTT  \\ 
+ \hline
+ Komunikačné vzory & Diaľkové meranie, príkazy & Diaľkové meranie, príkazy \\
+ \hline
+ Certifikované platformy &  Intel, Raspberry Pi 2, Freescale, Texas Instruments, MinnowBoard, BeagleBoard, Seeed, resin.io & 
+Broadcom, Marvell, Renesas, Texas Instruments, Microchip, Intel, Mediatek, Qualcomm, Seeed, BeagleBoard \\
+ \hline
+ SDK/jazyky & 	.Net, Java, C, NodeJS & C, NodeJS \\
+ \hline
+\end{tabular}
+\label{table:1}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\begin{subfigure}[b]{0.8\textwidth}
+\includegraphics[width=1\linewidth]{33_azure.png}
+\caption{Azure IOT HUB \cite{IOT22}}
+\label{33_azure}
+\end{subfigure}
+\begin{subfigure}[b]{0.8\textwidth}
+\includegraphics[width=1\linewidth]{33_aws.png}
+\caption{AWS IOT \cite{IOT22}}
+\label{33_aws}
+\end{subfigure}
+\caption{}
+\label{33_aa}
+\end{figure}
+\indent Na portály Devexperience a stránke \cite{IOT22}, kde bolo porovnanie vykonané, definujú tieto súčasti IoT architektúry: \\
+\indent Kompletné IoT riešenie pozostáva z viacero častí. Ako prvé je potrebné prijať všetky udalosti a dáta poslané zo zariadení a to je tak veľký problém, lebo v dobe internetu vecí je potrebné myslieť na škalovateľnosť v stovkách, tisíckach, miliónoch a ...  miliardách zariadení. Preto je potrebné mať \textbf{prijímací} (ingestion) systém, ktorý je schopný spracovať dáta veľmi rýchlo bez spomalenia celého procesu. Takto sa nazýva komunikačný vzor\textbf{ diaľkové meranie}. \\
+\indent Po získaní dát, prijímací systém ich musí poskytnúť biznis pravidlovému systému. V spomenutých riešeniach môže byť použitá tzv. horúca cesta na analýzu dát ako tok dát v reálnom čase a tzv. studená cesta pre ukladanie dát pre budúce analýzy. Je možné to považovať za Big Data problém. Obidve cesty môžu vystaviť informácie konečnému používateľovi, ktorý môže sledovať, čo sa zo zariadeniami v reálnom svete deje. Rovnaká informácia je  užitočná pre systém strojového učenia, ktorý môže pri prediktívnej analýze napomôcť pochopiť ako sa dáta môžu vyvíjať v budúcnosti na základe aktuálnych hodnôt. \\
+\indent Rovnako sa nesmie zabudnúť na opačnú cestu z cloud systému do zariadení. Vo väčšine prípadov na interakciu s nimi je potrebný vzor \textbf{príkazy} a \textbf{notifikácie}. Pomocou príkazov je možné komunikovať so zariadeniami, takže môžu vykonávať nejaké úkony. Pomocou notifikácií je možné poskytnúť zariadeniam informácie, ktoré potrebujú počas behu. Na zabezpečenie príkazov a notifikácií na komunikáciu s koncovými zariadeniami sa často používajú tzv. brány na komunikáciu zo zariadenia do cloudu a naopak často označovaný ako Cloud gateway. \\
+\indent Všetky zariadenia by boli schopné pristupovať na Cloud gateway, keby boli pripojené pomocou ethernetových sietí s podporou TCP/IP protokolu. Pre zariadenia s obmedzením na prostriedky s využitím PAN (Personal Area Network) protokolov (napríklad Bluetooth, Zigbee, Z-Wave, rovnako je možné uvažovať na AllJoyn frameworkom) je potrebné uvažovať nad tzv. field gateway, ktorý vystupuje ako lokálna brána na prístup do cloud priestoru. Táto brána má úlohu prekladača protokolov a môže zabezpečovať lokálne ukladanie, filtrovanie a spracovanie úkonov, keď prídu dáta pred tým ako sa pošlú do cloud. Samozrejme to môže byť vstupný bod pre lokálny systém na prijímanie príkazov a notifikácii poslaných z cloud a smerovaných na zariadenia. \cite{IOT22}
+Cieľom porovnania nie je zaoberať sa detailami implementácie jednotlivých riešení, ale poukázať na principiálnu podobnosť architektúr. Obrázok \ref{34_iot_fin} zovšeobecňuje a znázorňuje všetky možnosti zapojenia hlavných súčastí IoT riešení, ktoré sú uvedené v predošlej citácií a rovnako sa uvádzajú vo väčšine literatúr.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.99\textwidth]{34_iot_fin.png}
+\caption{IoT súčasti - všeobecne\cite{IOT23}}
+\label{34_iot_fin}
+\end{figure} 
+\subsubsection{Oblasti využitia}
+Po zadefinovaní hlavných súčasti architektúry IoT riešení, práca popisuje oblasti využitia s detailným zameraním na oblasť inteligentných domácností. Ako podklad pre vymenovanie je dokument \cite{IOT24}.
+\begin{itemize}
+\item IT a siete - verejné, podnikové (PC, router, switch, pobočkové ústredne, ...).
+\item Digitálna a verejná bezpečnosť - verejné osvetlenie, kamerové systémy...
+\item Obchod - digitálne popisky, registračné pokladnice, ... 
+\item Doprava - lode, lietadla, autá, mýta, ...
+\item Priemysel - distribučné siete, automatizácia zdrojov, ...
+\item Zdravotná starostlivosť - telemedicína a sledovanie pacientov, ...
+\item Energetika - optimalizácia dopytu a ponuky, podpora efektivity alternatívnych zdrojov, ...
+\item Komerčné budovy - správa budov, úspora na prevádzkovanie, ...
+\item Domácnosť a spotrebiteľ - pohodlie a zábava, spotrebiče, ...
 \end{itemize}
 
-TODO: Definícia (1000)
-
-TODO: 3 súčasti
-senzory akcne cleny
-obrazok vrstiev
-gateway
-cloud
-
-TODO: iot azure a ine riesenia a obrazky architektury
-
-TODO: Preco automatizacia - lebo senzory, zbernice a embedded zariadenia v procesoch
-
-TODO: ale ved to uz automatizacia pozna - rozdiel  medzi existujucimi priemyselnymi rieseniami a iot
-http://electronicdesign.com/iot/iot-industrial-way
-
-\subsubsection{Oblasti využitia}
+ 
 TODO: Inteligentná budova (500)
 TODO: dalsie oblasti = obrazok oblasti + citat google
 
