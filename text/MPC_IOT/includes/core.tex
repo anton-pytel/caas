@@ -1363,7 +1363,7 @@ Broadcom, Marvell, Renesas, Texas Instruments, Microchip, Intel, Mediatek, Qualc
 \indent Po získaní dát, prijímací systém ich musí poskytnúť biznis pravidlovému systému. V spomenutých riešeniach môže byť použitá tzv. horúca cesta na analýzu dát ako tok dát v reálnom čase a tzv. studená cesta pre ukladanie dát pre budúce analýzy. Je možné to považovať za Big Data problém. Obidve cesty môžu vystaviť informácie konečnému používateľovi, ktorý môže sledovať, čo sa zo zariadeniami v reálnom svete deje. Rovnaká informácia je  užitočná pre systém strojového učenia, ktorý môže pri prediktívnej analýze napomôcť pochopiť ako sa dáta môžu vyvíjať v budúcnosti na základe aktuálnych hodnôt. \\
 \indent Rovnako sa nesmie zabudnúť na opačnú cestu z cloud systému do zariadení. Vo väčšine prípadov na interakciu s nimi je potrebný vzor \textbf{príkazy} a \textbf{notifikácie}. Pomocou príkazov je možné komunikovať so zariadeniami, takže môžu vykonávať nejaké úkony. Pomocou notifikácií je možné poskytnúť zariadeniam informácie, ktoré potrebujú počas behu. Na zabezpečenie príkazov a notifikácií na komunikáciu s koncovými zariadeniami sa často používajú tzv. brány na komunikáciu zo zariadenia do cloudu a naopak často označovaný ako Cloud gateway. \\
 \indent Všetky zariadenia by boli schopné pristupovať na Cloud gateway, keby boli pripojené pomocou ethernetových sietí s podporou TCP/IP protokolu. Pre zariadenia s obmedzením na prostriedky s využitím PAN (Personal Area Network) protokolov (napríklad Bluetooth, Zigbee, Z-Wave, rovnako je možné uvažovať na AllJoyn frameworkom) je potrebné uvažovať nad tzv. field gateway, ktorý vystupuje ako lokálna brána na prístup do cloud priestoru. Táto brána má úlohu prekladača protokolov a môže zabezpečovať lokálne ukladanie, filtrovanie a spracovanie úkonov, keď prídu dáta pred tým ako sa pošlú do cloud. Samozrejme to môže byť vstupný bod pre lokálny systém na prijímanie príkazov a notifikácii poslaných z cloud a smerovaných na zariadenia. \cite{IOT22}
-Cieľom porovnania nie je zaoberať sa detailami implementácie jednotlivých riešení, ale poukázať na principiálnu podobnosť architektúr. Obrázok \ref{34_iot_fin} zovšeobecňuje a znázorňuje všetky možnosti zapojenia hlavných súčastí IoT riešení, ktoré sú uvedené v predošlej citácií a rovnako sa uvádzajú vo väčšine literatúr.
+Cieľom porovnania nie je zaoberať sa detailami implementácie jednotlivých riešení, ale poukázať na principiálnu podobnosť architektúr. Obrázok \ref{34_iot_fin} zovšeobecňuje a znázorňuje všetky možnosti zapojenia hlavných súčastí IoT riešení, ktoré sú uvedené v predošlej citácií a rovnako sa uvádzajú vo väčšine literatúr. Finálne zovšeobecnenie jednotlivých súčasti IoT architektúry je nasledovné. Snímač akčný člen, z ktorého komunikačná vrstva robí IoT zariadenie alebo naopak zariadenie s komunikačnou vrstvou a snímačom alebo akčným členom je IoT zariadenie. IoT zariadenie môže mať určitú výpočtovú kapacitu na jednoduchú automatizáciu procesu. Tiež môže mať výpočtovú kapacitu na obsluhu viacerých snímačov akčných členov a dočasné ukladanie dát. Ďalší prvok je IoT brána (Gateway, agregátor, field gateway), ktorá spravuje celú sieť IoT zariadení, komunikáciu s nimi, ich správu, pokročilú automatizáciu procesov a dátovú analýzu. Zvyčajne je rozhraním do cloud služieb, ak samotné IoT zariadenie nevie komunikovať priamo so službami v cloude. Posledným prvkom je IoT Backend (cloud služby), ktoré sú považované za neobmedzené kapacity priestoru, výkonu, kde môžu prebiehať zložité analýzy dát a zložitá automatizácia procesov.
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.99\textwidth]{34_iot_fin.png}
@@ -1371,7 +1371,7 @@ Cieľom porovnania nie je zaoberať sa detailami implementácie jednotlivých ri
 \label{34_iot_fin}
 \end{figure} 
 \subsubsection{Oblasti využitia}
-Po zadefinovaní hlavných súčasti architektúry IoT riešení, práca popisuje oblasti využitia s detailným zameraním na oblasť inteligentných domácností. Ako podklad pre vymenovanie je dokument \cite{IOT24}.
+Po zadefinovaní hlavných súčasti architektúry IoT riešení, práca popisuje oblasti využitia IoT. Ako podklad pre vymenovanie je dokument \cite{IOT24}.
 \begin{itemize}
 \item IT a siete - verejné, podnikové (PC, router, switch, pobočkové ústredne, ...).
 \item Digitálna a verejná bezpečnosť - verejné osvetlenie, kamerové systémy...
@@ -1405,9 +1405,122 @@ TODO: co je continuous integration a ako zabezpecit
 
 
 \section{Implementácia}
-Praktická časť druhej fázy štúdia je zameraná na IoT prostredie
-TODO: implementacia sa sklada z viacerych casti (500)
+Praktická časť druhej fázy štúdia je zameraná na experimenty s IoT prostredím a architektúrou. Ide o IoT architektúru v inteligentnej domácnosti. Do existujúcej architektúry je zavedený nový pojem controller as a service (CaaS) - regulátor ako služba, ktorý je inšpirovaný inými IoT architektúrami v dvoch bodoch. Prvý bod je využitie potenciálu výpočtového výkonu serverov. Vstavané zariadenia sa ukázali ako nedostatočné pre vykonávanie online MPC výpočtu. Druhý bod je ovplyvňovanie akčného zásahu na základe výpočtu na serveri. Viac bude popísane v časti \ref{caas}, teraz nasleduje popis IoT prostredia a architektúry.
 \subsection{Popis experimentálneho IoT prostredia}
+Vychádzajúc z obrázkov \ref{31_iot} a \ref{34_iot_fin} prostredie pozostáva z týchto prvkov.
+\begin{itemize}
+\item Fyzická vrstva - snímače.
+  \begin{itemize}
+    \item Svetelný senzor.
+      \begin{itemize}
+        \item Aeotec MultiSensor 4-in-1.
+        \item Slim Multi-Sensor PSM01.        
+       \end{itemize}
+    \item Teplotný senzor.
+      \begin{itemize}
+        \item Aeotec MultiSensor 4-in-1.
+        \item Slim Multi-Sensor PSM01.        
+        \item Oregon Scientific WMR 88. 
+       \end{itemize}    
+    \item Senzor vlhkosti.
+      \begin{itemize}
+        \item Aeotec MultiSensor 4-in-1.
+        \item Slim Multi-Sensor PSM01.        
+        \item Oregon Scientific WMR 88. 
+       \end{itemize}     
+    \item Pohybový senzor.
+      \begin{itemize}
+        \item Aeotec MultiSensor 4-in-1.
+        \item Vision ZP3102 EU PIR Motion Sensor.        
+       \end{itemize}     
+    \item Okenný/dverový senzor na magnetickom princípe.
+      \begin{itemize}
+        \item Slim Multi-Sensor PSM01.
+        \item FIBARO FGK 101-107.        
+       \end{itemize}            
+    \item Záplavový senzor.    
+      \begin{itemize}
+        \item FIBARO FGFS 101.        
+       \end{itemize}                
+    \item Senzor intenzity a smeru vetra.    
+      \begin{itemize}      
+        \item Oregon Scientific WMR 88. 
+       \end{itemize}         
+    \item Senzor barometrického tlaku.        
+      \begin{itemize}      
+        \item Oregon Scientific WMR 88. 
+       \end{itemize}             
+    \item Tlačítko.     
+      \begin{itemize}      
+        \item Z-Wave.Me Wall Controller 06443. 
+        \item Z-Wave.Me Wall Controller WallC.
+       \end{itemize}             
+  \end{itemize}
+\item Fyzická vrstva - akčné členy.
+  \begin{itemize}
+    \item Termostatická hlavica.
+      \begin{itemize}      
+        \item Danfoss living connect Z. 
+       \end{itemize}     
+    \item Spínacie relé.
+      \begin{itemize}      
+        \item PAN04 Dual realy.         
+       \end{itemize}     
+    \item Univerzálny stmievač.    
+      \begin{itemize}      
+        \item FIBARO FGD 211.         
+        \item Aeotec Micro Smart Dimmer. 
+        \item Z-Wave.Me Wall Flush-Mountables.                 
+       \end{itemize}         
+    \item Spínacia zásuvka.     
+      \begin{itemize}      
+        \item FIBARO FGWPE/F 101.         
+       \end{itemize}     
+  \end{itemize}  
+\item Fyzická vrstva - komunikačný hardware.
+  \begin{itemize}
+    \item USB
+  \end{itemize}    
+\item Fyzická vrstva - Zariadenia.
+  \begin{itemize}
+    \item Raspberry Pi model A+
+    \item Raspberry Pi 2 model B    
+    \item Vera Control VeraLite
+  \end{itemize}  
+\item Komunikačná vrstva smer IoT zariadenie.
+  \begin{itemize}
+    \item Z-Wave
+    \item RSS (HTTP)
+  \end{itemize}    
+\item Komunikačná vrstva smer IoT Backend.
+  \begin{itemize}
+    \item REST (HTTP)
+  \end{itemize} 
+\item Systémová vrstva.
+  \begin{itemize}
+    \item MongoDB databáza 
+    \item Jersey REST interface
+    \item Matlab/Octave  nástroje na výpočty     
+    \item JSON komunikačné rozhranie
+  \end{itemize}           
+\item Používateľská vrstva.
+  \begin{itemize}
+    \item Správa inteligentnej domácnosti
+    \item Vizualizácia nameraných údajov    
+  \end{itemize}         
+\end{itemize}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.99\textwidth]{35_schema.png}
+\caption{Experimentálne prostredie}
+\label{35_schema}
+\end{figure} 
+Fyzická vrstva sa skladá z vymenovaných senzorov a akčných členov, z ktorých väčšina je pripojená do systému pomocou protokolu Z-Wave. \\
+\indent Protokol Z-Wave je bezdrôtový protokol, ktorý potrebuje na svoje fungovanie jeden hlavný uzol, ktorý spravuje sieť a identifikáciu zariadení. Hlavný uzol v experimentálnom prostredí je zariadenie VeraLite. Existuje viacero alternatív ku tomuto zariadeniu, ktoré majú svoje výhody a nevýhody. Argumenty pre voľbu tohto zariadenia boli stabilita, možnosť programovania a nižšia cena oproti iným. Zariadenie od spoločnosti Fibaro \cite{IOT25} je vysoko stabilné, ale neumožňuje veci programovať a aj cena je rádovo vyššia. Zariadenie Vera3 \cite{IOT27} je vyššia verzia zariadenia VeraLite, ktoré je ešte stabilnejšie, ale aj pomerne drahšie. Ďalšie uvažované zariadenie bolo RaZberry \cite{IOT26}, ktoré sa predáva ako pripojiteľný modul so Z-wave komunikačným rozhraním ku zariadeniu Raspberry, ktoré by zohrávalo úlohu hlavného uzlu. Cena aj možnosť programovania tu boli výborne avšak stabilita nebola dostatočná. Preto hlavný uzol siete Z-Wave zohráva zariadenie VeraLite. Pomocou tohto zariadenia sú jednotlivé fyzické zariadenia pridávané do siete. Okrem fyzických zariadení vie toto zariadenie pridávať aj zariadenia softvérové, čo súvisí s možnosťou programovateľnosti. Softvérovým zariadeniam sa bude venovať neskôr. Spôsob pridávania fyzických zariadení do siete Z-Wave funguje na základe špeciálneho módu (inclusion mode), ktorý je potrebné nastaviť na hlavnom uzle. Hlavný uzol vtedy počúva a očakáva sekvenciu príkazov, pomocou ktorých identifikuje nové zariadenie a zaregistruje ho do siete - proces nazývaný inclusion. Pridávané zariadenie rovnako musí byť nastavené do inclusion módu. Spôsob zapnutia inclusion módu je plne na výrobcovi zariadenia väčšinou to je určitá sekvencia stlačenia tlačítka. Pri senzoroch sú to zvyčajne špeciálne tlačítka pre účely nastavovania sieťových parametrov. Pri ostatných zariadeniach sa využívajú používateľské tlačítka. Po zaregistrovaní zariadenia do siete hlavný uzol vie zariadenie ovládať a pýtať sa na aktuálny stav. Zariadenie VeraLite v tomto systéme, ako je možné vidieť na obrázku \ref{35_schema} zohráva úlohu brány. \\
+\indent Ďalšie zariadenie pripojené v IoT systéme je meteostanica a to prostredníctvom USB káblu na zariadenie Raspberry Pi model A. Meteostanica pozostáva z vnútornej zobrazovacej jednotky, na ktorej je meraná vnútorná teplota a vlhkosť, vonkajší snímač teploty, vlhkosti a atmosferického tlaku,  merač úhrnu zrážok a anemometer na meranie intenzity a smeru vetra. Komunikácia medzi snímačmi a vnútornou jednotkou je prostredníctvom rádiového signálu na frekvencii 433 MHz. Na Raspberry beží operačný systém Raspbian, špeciálna verzia distribúcie Debian. V operačnom systéme beží aplikácia \textit{wview}, ktorá komunikuje s USB portom a ukladá údaje do \textit{sqlite} databázy, robí tzv. dočasné úložisko. Síce dlhodobejšie ako je pamäť na zobrazovacej jednotke, ktorá ukladá posledných 24 hodín, ale nie je to úložisko, na ktoré sa možno spoľahnúť.  
+\indent Iné zariadenia, ktoré je možné pripojiť do IoT systému, ale dlhodobo nie sú pripojené sú plošné spoje s rôznym typom senzorov iných ako boli vymenované. Tieto sú pripojiteľné do Raspberry pi pomocou rozhrania GPIO. Na pripájanie takýchto zariadení je v IoT systéme Raspberry pi 2 Model B+. Táto časť je pripravená na jednorázové experimenty. Ďalej nasleduje popis komunikácie medzi zariadeniami.  
+
+
 TODO:popis
 vera 
 zbernica 
@@ -1415,9 +1528,77 @@ prvky
 nevyhody vo OneNote
 
 \subsubsection{Tvorba modulov}
+Na komunikáciu medzi zariadeniami, ako už bolo spomenuté, je komunikačný protokol Z-Wave. Ten v tejto kapitole nie je zaujímavý. Táto časť popisuje 
+\begin{itemize}
+  \item spôsob komunikácie zariadení Raspberry Pi s IoT bránou (VeraLite).
+  \item  Spôsob programovania v zariadení VeraLite   
+  \item  a spôsob vytvárania softvérových zariadení v ňom.   
+\end{itemize} 
+Výrobcovia zariadení rodiny Vera si ako základný prvok postavili protokol UPnP ako priemyselný štandard na ovládanie zariadení a skriptovací jazyk Lua. Framework, ktorý vytvorili, sa volá Luup \cite{IOT28}. 
+\indent Vďaka UPnP je možné definovať zariadenia, jeho služby, stavové premenné služby, operácie služby a parametre na vstupe a výstupe operácie. Ako príklad je uvedené spínané svetlo a stmievané svetlo. ID definície spínaného zariadenia je \textit{urn:schemas-upnp-org:device:BinaryLight:1}. Spínané svetlo má len jednu službu a jej ID je \textit{urn:upnp-org:serviceId:SwitchPower1}. Jediná premenná tejto služy je \textit{Status}, ktorá môže nadobúdať hodnoty 0, ak je svetlo vypnuté a 1, ak je svetlo zapnuté. Jedina operácia tejto služby \textit{SetTarget}, ktorá má na vstupe parameter s názvom \textit{newTargetValue}. Ukážka zapnutia svetla je v algoritme \ref{alg01}. 
+\begin{algorithm}
+\lstset{
+    language=C,
+    basicstyle=\small\sffamily,
+    frame=none,
+    numbers=left,
+    xleftmargin=5.0ex,
+    numberstyle=\tiny,
+    stepnumber=1,
+    showstringspaces=false,
+    keywordstyle=\color{blue}\bfseries
+    }
+\lstset{emph={%  Adjust any special keywords
+    printf%
+    },emphstyle={\color[rgb]{1,0,0}\bfseries}%
+}%
+\begin{lstlisting}
+luup.call_action("urn:upnp-org:serviceId:SwitchPower1",
+                 "SetTarget", {newTargetValue = "1"}, 37)
+\end{lstlisting}
+ \caption{Zapnutie svetla}
+ \label{alg01}
+\end{algorithm}
+
+Funkcia call\_action frameworku Luup robí zmenu nastavenia UPnP premennej prostredníctvom funkcie, ktorá bola pri špecifikácii služby zariadenia na to určená. Parametre potrebné na túto zmenu sú meno služby, meno funkcie, meno vstupnej premennej a jej hodnotu a nakoniec ID inštancie zariadenia v systéme. ID inštancie je vytvárané tak pre fyzické zariadenia, ako aj pre softvérové zariadenia.\\
+\indent Stmievané svetlo má ID definície \textit{urn:schemas-upnp-org:device:DimmableLight:1}. Má dve služby. Má aj službu \textit{urn:upnp-org:serviceId:SwitchPower1}, ktorú má spínané svetlo, keďže aj stmievané svetlo je možne vypnúť ako spínané. Navyše má službu \textit{urn:upnp-org:serviceId:Dimming1}, ktorá pomocou premennej operácie \textit{SetLoadLevelTarget} a vstupnej premennej \textit{newLoadlevelTarget} nastavuje stavovú premennú \textit{LoadLevelStatus}. Kód na zistenie stavu stmievaného svetla vo frameworku Luup je zobrazený v algoritme \ref{alg02}.
+\begin{algorithm}
+\lstset{
+    language=C,
+    basicstyle=\small\sffamily,
+    frame=none,
+    numbers=left,
+    xleftmargin=5.0ex,
+    numberstyle=\tiny,
+    stepnumber=1,
+    showstringspaces=false,
+    keywordstyle=\color{blue}\bfseries
+    }
+\lstset{emph={%  Adjust any special keywords
+    printf%
+    },emphstyle={\color[rgb]{1,0,0}\bfseries}%
+}%
+\begin{lstlisting}
+lightLevel = luup.variable_get("urn:upnp-org:serviceId:Dimming1", 
+                               "LoadLevelStatus", 37)
+
+\end{lstlisting}
+ \caption{Načítanie stavu stmievaného svetla}
+ \label{alg02}
+\end{algorithm}
+Na základe tejto generickosti UPnP protokolu sa v práci definovali tri nové typy zariadení.
+\begin{itemize}
+  \item Zariadenie typu barometer s ID  \textit{urn:schemas-micasaverde-com:device:Barometer:1} a službou \textit{urn:upnp-org:serviceId:Barometer1}, ktorá bola vytvorená na základe zariadenia pre snímanie teploty so zmenou mena stavovej premennej na \textit{CurrentAirPressure}
+  \item Zariadenie typu veterný snímač s ID  \textit{urn:schemas-micasaverde-com:device:WindSensor:1} a službou \textit{urn:upnp-org:serviceId:WindSensor1}. Toto zariadenie pozná stavové premenné \textit{WindSpeed} a \textit{WindDirection}. Obe vytvorené zariadenia, nemajú operáciu na zadávanie hodnoty, keďže sú to senzory. Používateľ pre nemá a ani nemá mať možnosť zadávať hodnotu, iba ju zo senzora čítať.
+  \item  Postupne sa prechádza k vysvetleniu spôsobu komunikácie medzi Raspberry Pi a VeraLite.  Pre tento účel sa vytvorilo  zariadenie typu RSS Reader s ID \textit{urn:demo-micasaverde-com:device:RssReader:1}. RSS Reader predstavuje zariadenia, ktoré pravidelne odoberá novinky z webových stránok vo formáte XML. 
+\end{itemize} 
+
+
 TODO: plugin architektura RSS reader
-\subsection{CaaS}
+\subsection{CaaS} \label{caas}
 TODO: vysvetlit + doplnit motivaciu z uvodu
+testovane zariadenia 
+moznosti c++
 \subsubsection{Implementácia}
 TODO: micro service architektura
 TODO: service aplikacia
