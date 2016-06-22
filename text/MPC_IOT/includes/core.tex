@@ -689,7 +689,7 @@ C & 0 & - I_{n_{y}} \\
 
 Po upravení algoritmu na sledovanie po častiach spojitého referenčného signálu už MPC regulátor neriadi výstupnú veličinu k 0 hodnote alebo vektoru, ale ku aktuálnej hodnote prípadne vektoru referenčného signálu v kroku k, \dots, k + N - 1, kde N predstavuje horizont predikcie. Preto referenčný signál vstupujúci do výpočtu je je buď vektor pre jednorozmerné systémy (SISO) alebo matica pre viacrozmerné systémy (MIMO). Časový priebeh výstupnej veličiny SISO systému regulovaného MPC regulátorom so sledovaním referencie je znázornený na obrázku \ref{07_ref}.
 
-\subsubsection{Explicitné riešenie - offline MPC}
+\subsubsection{Explicitné riešenie - offline MPC} \label{offmpc}
 
 Je zrejmé, že optimálna hodnota kritéria \ref{eq14} a~optimálna riadiaca sekvencia \ref{eq13} (aj s~obmedzeniami) sú funkciou stavu x(t). Túto úlohu je možné formulovať pomocou \textbf{multiparametrického kvadratického
 programovania} (mp-QP), ktoré sa snaží nájsť optimálne riešenie pre
@@ -777,7 +777,7 @@ a spojitá kvadratická funkcia
 Týmto sa presunula numerická výpočtová náročnosť optimalizácie \ref{eq13} k~off-line výpočtom. V~priebehu riadenia stačí identifikovať región CR\textsubscript{i}, obsahujúci aktuálny stav x(t) a~aplikovať príslušný
 zákon riadenia \label{eq36}. \cite{MPC05} \\
 Takýmto spôsobom je možné rozdeliť výpočtovú zložitosť na dve časti. Prvá, výpočtovo zložitejšia, časť je hľadanie kritických regiónov, ktorá sa môže uskutočniť pred zavedením regulátora do behu. Tuto nie je čas kritický, pretože regulačný proces nebeží. Druhá časť je počas behu regulačného procesu. Tá predstavuje časovo nenáročnú operáciu vyhľadania kritického regiónu v pamäti a podľa neho vrátiť akčný zásah. Hlavná nevýhoda offline - explicitného riešenia je, že systém je jednorázovo daný a už počas behu nevstupuje do výpočtu na rozdiel od online riešenia, kde do každého kroku matematický model systému vstupuje a teda je možné  matematický model dynamicky adaptovať, aby čo najviac zodpovedal reálnemu systému. Pri voľbe spôsobu implementácie praktickej časti pre výučbu aj neskôr v IoT prostredí, tento fakt zavážil a zvolila sa online metóda implementácie.
-\subsection{Popis funkčnosti On-line MPC algoritmu}
+\subsection{Popis funkčnosti On-line MPC algoritmu} \label{mpcalg}
 Vytvorený algoritmus sa skladá skladá z viacerých modulov - funkcií naprogramovaných v prostredí Matlab a prispôsobených na fungovanie v open source verzii Octave. Programbol vytvorený pre účely využitia v pedagogickom procese grafické rozhranie bolo vytvorené pomocou komponent Matlabu - Guide, ktorý slúži práve na vytváranie grafických rozhraní. Základné komponenty, z ktorých sa program a  skladá sú znázornené na obrázku \ref{16_com}.
 \begin{figure}[h]
 \centering
@@ -1405,7 +1405,7 @@ TODO: co je continuous integration a ako zabezpecit
 
 
 \section{Implementácia}
-Praktická časť druhej fázy štúdia je zameraná na experimenty s IoT prostredím a architektúrou. Ide o IoT architektúru v inteligentnej domácnosti. Do existujúcej architektúry je zavedený nový pojem controller as a service (CaaS) - regulátor ako služba, ktorý je inšpirovaný inými IoT architektúrami v dvoch bodoch. Prvý bod je využitie potenciálu výpočtového výkonu serverov. Vstavané zariadenia sa ukázali ako nedostatočné pre vykonávanie online MPC výpočtu. Druhý bod je ovplyvňovanie akčného zásahu na základe výpočtu na serveri. Viac bude popísane v časti \ref{caas}, teraz nasleduje popis IoT prostredia a architektúry.
+Praktická časť druhej fázy štúdia je zameraná na experimenty s IoT prostredím a architektúrou. Ide o IoT architektúru v inteligentnej domácnosti. Do existujúcej architektúry je zavedený nový pojem controller as a service (CaaS) - regulátor ako služba, ktorý je inšpirovaný inými IoT architektúrami v dvoch bodoch. Prvý bod je využitie potenciálu výpočtového výkonu serverov. Vstavané zariadenia sa ukázali ako nedostatočné pre vykonávanie online MPC výpočtu. Druhý bod je ovplyvňovanie akčného zásahu na základe výpočtu na serveri. Viac je popísane v časti \ref{caas}, teraz nasleduje popis IoT prostredia a architektúry.
 \subsection{Popis experimentálneho IoT prostredia}
 Vychádzajúc z obrázkov \ref{31_iot} a \ref{34_iot_fin} prostredie pozostáva z týchto prvkov.
 \begin{itemize}
@@ -1520,12 +1520,7 @@ Fyzická vrstva sa skladá z vymenovaných senzorov a akčných členov, z ktor�
 \indent Ďalšie zariadenie pripojené v IoT systéme je meteostanica a to prostredníctvom USB káblu na zariadenie Raspberry Pi model A. Meteostanica pozostáva z vnútornej zobrazovacej jednotky, na ktorej je meraná vnútorná teplota a vlhkosť, vonkajší snímač teploty, vlhkosti a atmosferického tlaku,  merač úhrnu zrážok a anemometer na meranie intenzity a smeru vetra. Komunikácia medzi snímačmi a vnútornou jednotkou je prostredníctvom rádiového signálu na frekvencii 433 MHz. Na Raspberry beží operačný systém Raspbian, špeciálna verzia distribúcie Debian. V operačnom systéme beží aplikácia \textit{wview}, ktorá komunikuje s USB portom a ukladá údaje do \textit{sqlite} databázy, robí tzv. dočasné úložisko. Síce dlhodobejšie ako je pamäť na zobrazovacej jednotke, ktorá ukladá posledných 24 hodín, ale nie je to úložisko, na ktoré sa možno spoľahnúť.  
 \indent Iné zariadenia, ktoré je možné pripojiť do IoT systému, ale dlhodobo nie sú pripojené sú plošné spoje s rôznym typom senzorov iných ako boli vymenované. Tieto sú pripojiteľné do Raspberry pi pomocou rozhrania GPIO. Na pripájanie takýchto zariadení je v IoT systéme Raspberry pi 2 Model B+. Táto časť je pripravená na jednorázové experimenty. Ďalej nasleduje popis komunikácie medzi zariadeniami.  
 
-
-TODO:popis
-vera 
-zbernica 
-prvky
-nevyhody vo OneNote
+TODO: nevyhody vo OneNote
 
 \subsubsection{Tvorba modulov}
 Na komunikáciu medzi zariadeniami, ako už bolo spomenuté, je komunikačný protokol Z-Wave. Ten v tejto kapitole nie je zaujímavý. Táto časť popisuje 
@@ -1534,7 +1529,7 @@ Na komunikáciu medzi zariadeniami, ako už bolo spomenuté, je komunikačný pr
   \item  Spôsob programovania v zariadení VeraLite   
   \item  a spôsob vytvárania softvérových zariadení v ňom.   
 \end{itemize} 
-Výrobcovia zariadení rodiny Vera si ako základný prvok postavili protokol UPnP ako priemyselný štandard na ovládanie zariadení a skriptovací jazyk Lua. Framework, ktorý vytvorili, sa volá Luup \cite{IOT28}. 
+Výrobcovia zariadení rodiny Vera si ako základný prvok postavili protokol UPnP ako priemyselný štandard na ovládanie zariadení a skriptovací jazyk Lua. Framework, ktorý vytvorili, sa volá \textit{Luup} \cite{IOT28}. 
 \indent Vďaka UPnP je možné definovať zariadenia, jeho služby, stavové premenné služby, operácie služby a parametre na vstupe a výstupe operácie. Ako príklad je uvedené spínané svetlo a stmievané svetlo. ID definície spínaného zariadenia je \textit{urn:schemas-upnp-org:device:BinaryLight:1}. Spínané svetlo má len jednu službu a jej ID je \textit{urn:upnp-org:serviceId:SwitchPower1}. Jediná premenná tejto služy je \textit{Status}, ktorá môže nadobúdať hodnoty 0, ak je svetlo vypnuté a 1, ak je svetlo zapnuté. Jedina operácia tejto služby \textit{SetTarget}, ktorá má na vstupe parameter s názvom \textit{newTargetValue}. Ukážka zapnutia svetla je v algoritme \ref{alg01}. 
 \begin{algorithm}
 \lstset{
@@ -1560,8 +1555,8 @@ luup.call_action("urn:upnp-org:serviceId:SwitchPower1",
  \label{alg01}
 \end{algorithm}
 
-Funkcia call\_action frameworku Luup robí zmenu nastavenia UPnP premennej prostredníctvom funkcie, ktorá bola pri špecifikácii služby zariadenia na to určená. Parametre potrebné na túto zmenu sú meno služby, meno funkcie, meno vstupnej premennej a jej hodnotu a nakoniec ID inštancie zariadenia v systéme. ID inštancie je vytvárané tak pre fyzické zariadenia, ako aj pre softvérové zariadenia.\\
-\indent Stmievané svetlo má ID definície \textit{urn:schemas-upnp-org:device:DimmableLight:1}. Má dve služby. Má aj službu \textit{urn:upnp-org:serviceId:SwitchPower1}, ktorú má spínané svetlo, keďže aj stmievané svetlo je možne vypnúť ako spínané. Navyše má službu \textit{urn:upnp-org:serviceId:Dimming1}, ktorá pomocou premennej operácie \textit{SetLoadLevelTarget} a vstupnej premennej \textit{newLoadlevelTarget} nastavuje stavovú premennú \textit{LoadLevelStatus}. Kód na zistenie stavu stmievaného svetla vo frameworku Luup je zobrazený v algoritme \ref{alg02}.
+Funkcia call\_action frameworku \textit{Luup} robí zmenu nastavenia UPnP premennej prostredníctvom funkcie, ktorá bola pri špecifikácii služby zariadenia na to určená. Parametre potrebné na túto zmenu sú meno služby, meno funkcie, meno vstupnej premennej a jej hodnotu a nakoniec ID inštancie zariadenia v systéme. ID inštancie je vytvárané tak pre fyzické zariadenia, ako aj pre softvérové zariadenia.\\
+\indent Stmievané svetlo má ID definície \textit{urn:schemas-upnp-org:device:DimmableLight:1}. Má dve služby. Má aj službu \textit{urn:upnp-org:serviceId:SwitchPower1}, ktorú má spínané svetlo, keďže aj stmievané svetlo je možne vypnúť ako spínané. Navyše má službu \textit{urn:upnp-org:serviceId:Dimming1}, ktorá pomocou premennej operácie \textit{SetLoadLevelTarget} a vstupnej premennej \textit{newLoadlevelTarget} nastavuje stavovú premennú \textit{LoadLevelStatus}. Kód na zistenie stavu stmievaného svetla vo frameworku \textit{Luup} je zobrazený v algoritme \ref{alg02}.
 \begin{algorithm}
 \lstset{
     language=C,
@@ -1590,18 +1585,91 @@ Na základe tejto generickosti UPnP protokolu sa v práci definovali tri nové t
 \begin{itemize}
   \item Zariadenie typu barometer s ID  \textit{urn:schemas-micasaverde-com:device:Barometer:1} a službou \textit{urn:upnp-org:serviceId:Barometer1}, ktorá bola vytvorená na základe zariadenia pre snímanie teploty so zmenou mena stavovej premennej na \textit{CurrentAirPressure}
   \item Zariadenie typu veterný snímač s ID  \textit{urn:schemas-micasaverde-com:device:WindSensor:1} a službou \textit{urn:upnp-org:serviceId:WindSensor1}. Toto zariadenie pozná stavové premenné \textit{WindSpeed} a \textit{WindDirection}. Obe vytvorené zariadenia, nemajú operáciu na zadávanie hodnoty, keďže sú to senzory. Používateľ pre nemá a ani nemá mať možnosť zadávať hodnotu, iba ju zo senzora čítať.
-  \item  Postupne sa prechádza k vysvetleniu spôsobu komunikácie medzi Raspberry Pi a VeraLite.  Pre tento účel sa vytvorilo  zariadenie typu RSS Reader s ID \textit{urn:demo-micasaverde-com:device:RssReader:1}. RSS Reader predstavuje zariadenia, ktoré pravidelne odoberá novinky z webových stránok vo formáte XML. 
+  \item  Postupne sa prechádza k vysvetleniu spôsobu komunikácie medzi Raspberry Pi a VeraLite.  Pre tento účel sa vytvorilo  zariadenie typu RSS Reader s ID \textit{urn:demo-micasaverde-com:device:RssReader:1}.
+\end{itemize} 
+\indent RSS Reader predstavuje zariadenie, ktoré pravidelne odoberá novinky z webových stránok vo formáte XML. Vďaka tomu, okrem toho, že je možné sa napojiť na odber akýchkoľvek noviniek z bežných webových stránok, je možné sa napojiť aj na aplikáciu \textit{wview}, ktorá v popisovanom systéme beží na Raspberry Pi. Do tela noviniek generovaných aplikáciou \textit{wview} sa nakonfigurovalo, aby sa tam vkladalo XML v špecifickom tvare, v ktorom sú uložené dáta zo senzorov. 
+Ukážka časti konfiguračného súboru je v algoritme \ref{alg03}.
+\begin{algorithm}
+\lstset{
+    language=XML,
+    basicstyle=\small\sffamily,
+    frame=none,
+    numbers=left,
+    xleftmargin=5.0ex,
+    numberstyle=\tiny,
+    stepnumber=1,
+    showstringspaces=false,
+    keywordstyle=\color{blue}\bfseries
+    }
+\lstset{emph={%  Adjust any special keywords
+    printf%
+    },emphstyle={\color[rgb]{1,0,0}\bfseries}%
+}%
+\begin{lstlisting}
+...
+<item>
+  <title><!--stationCity-->,<!--stationState--> </title>
+      <link>Insert_Your_WX_HomePage_URL_Here</link>
+      <description>Current Weather Conditions</description>
+      <pubDate><!--stationTime-->, <!--stationDate--></pubDate>
+      <dc:date><!--stationDate--> - <!--stationTime--></dc:date>
+	  <!-- vera specific content -->
+	  <temperature>
+	    <sensor id="0" attr="inside" descr="" >
+		  <value><![CDATA[<!--insideTemp-->]]></value>
+		  <unit><![CDATA[<!--tempUnit-->]]></unit>
+		</sensor>
+	    <sensor id="1" attr="outside" descr="" >
+		  <value><![CDATA[<!--outsideTemp-->]]></value>
+		  <unit><![CDATA[<!--tempUnit-->]]></unit>
+		</sensor>
+	  </temperature>
+  </title>
+</item>
+...
+\end{lstlisting}
+ \caption{Časť konfiguračného súboru na vytvorenie XML k odberu noviniek}
+ \label{alg03}
+\end{algorithm}
+
+Takto sa zabezpečí, že v odbere noviniek zo ,,serveru`` s meteostanicou je pravidelne podávaná informácia o senzorických dátach, v prípade práce to je konkrétne vnútorná a vonkajšia teplota, vnútorná a vonkajšia vlhkosť, intenzita a smer vetra a barometrický tlak. V grafickom rozhraní na nastavenie aplikácie \textit{wview} sa volí ako často sa majú dáta publikovať. Týmto je vybavená serverová strana. Pokračuje sa v opise RSS Reader softvérového zariadenia naprogramovaného v \textit{Luup} frameworku. Základné súčasti programu naprogramované v jazyku Lua, ktoré možno jednoducho pridať do \textit{Luup} frameworku, sú  modul \textit{socket.http}, ktorý slúži na poslanie HTTP GET požiadavky na ,,server`` s meteostanicou alebo url na odoberanie noviniek. Ďalej to je XML parser, ktorý bol stiahnutý ako open-source zdrojový kód a použitý na čítanie jednotlivých položiek v novinkách a na čítanie definovaného tvaru XML, ktoré chodí z meteostanice. V programe je definovaný prepínač, ktorý umožní, aby na základe prečítaných dát z meteostanice sa vytvorili samostatné ,,podzariadenia`` RSS Reader zariadenia, ktoré sú typu teplotného senzoru, senzoru vlhkosti a všetky ostatné, ktoré boli vyššie vymenované. V grafickom rozhraní pre používateľa to vyzerá tak, ako je znázornené na obrázku \ref{36_veragui}. 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.99\textwidth]{36_veragui.png}
+\caption{Vera GUI - vytvorené softvérové zariadenie}
+\label{36_veragui}
+\end{figure} 
+Na obrázku je zariadenie s popisom \textit{Rss reading device} hlavné zariadenie, ktoré vytvorilo všetky ,,podzariadenia`` s prefixom Oregon. Výhoda tohto prístupu je, že v automatizačných skriptoch sa možno rovno dopytovať na údaj z meteostanice a vyzerá to akoby teplota bola snímaná Z-wave zariadením, keďže Vera je primárne hlavný uzol Z-Wave zbernice. Súčasti, ktoré je potrebné pri tvorbe softvérového zariadenia vytvoriť:
+\begin{itemize}
+  \item Definíciu zariadenia pre RSS Reader, čo je \textit{D\_RssRead.xml}. XML súbor kde je definované ID definície a služby, z ktorých pozostáva. V tomto prípade služba \textit{urn:demo-micasaverde-com:serviceId:RssRead1}.
+  \item Ďalej je potrebné vytvoriť definíciu služby v tomto prípade ID služby z predošlého bodu je definované v súbore \textit{S\_RssRead.xml}. Tu sa nachádzajú stavové premenné a operácie. Najdôležitejšie stavové premenné sú URL a prihlasovacie údaje v prípade zabezpečenej URL. Riešený je len prípad zabezpečenia Basic authentification spôsobom. Potom je tam niekoľko pomocných premenných a následne tieto operácie:
+  \begin{itemize}
+    \item SetURL - nastavenie URL adresy servera.
+    \item SetUser - nastavenie prihlasovacieho mena.
+    \item SetPass - nastavovanie hesla.
+    \item SetSelected - nastavovanie zvolenej položky v prípade, ak server vráti viacero položiek v odbere noviniek. Nemôže sa stať v prípade odberu noviniek z meteostanice, lebo XML je definované tak, že tam je len jedna položka.
+    \item SetRefPeriod - nastavenie času ako často sa má RSS Reader spýtať servera na aktuálne hodnoty. Tu si treba všimnúť, že je uplatnený princíp pravidelného pýtania, namiesto asynchronného prístupu, ktorý by bol lepší, ale náročnejší na zdroje aj na strane klienta ja na strane servera a navyše to \textit{Luup} framework nepodporuje.
+    \item GetFeed - akcia na vyžiadanie si najnovších noviniek kliknutím. Bez zásahu používateľa je táto akcia pravidelne volaná podľa už periódy nastavovanej v predošlej funkcii.
+  \end{itemize}  
+  \item Ak je zadefinované zariadenie, služba, operácie a stavové premenné, tak je potrebné ich implementovať v špecifickom súbore. Pre RSS Reader to je \textit{I\_RssRead.xml}. V tomto súbore je implementácia jednotlivých operácii. Keďže to je XML súbor, môže sa v tom komplikovane vyvíjať komplexná funkcionalita, preto je možné komplexnú logiku v Lua skripte programovať do špeciálneho súboru pre RSS Reader to je \textit{L\_RssRead.lua}. 
+  \item Nakoniec Vera rozhranie s \textit{Luup} frameworkom umožňuje definovať vzhľad ako sa bude na GUI softvérové zariadenie zobrazovať. Toto je konfigurované v JSON súbore (\textit{D\_RssRead.json}). Je to pomerne obmedzený a ťažkopádny vývoj rozhrania, ale je to daň za konfiguračnú unifikovanosť. Vzhľad RSS Reader zariadenia je zobrazný na obrázku  \ref{36_veragui} a nastavenia RSS Reader zariadenia na obrázku \ref{38_rssoregon}.  
+\end{itemize}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\textwidth]{38_rssoregon.png}
+\caption{Nastavenia RSS Reader zariadenia}
+\label{38_rssoregon}
+\end{figure} 
+Potom ako je všetko zadefinované, Vera poskytuje vývojárske rozhranie, kde sa spomínané súbory vložia a tým Vera pozná nové zariadenia, ktoré ma definované v XML súboroch, ktorých štruktúra je daná UPnP protokolom. Inštancia zariadenia však stále nie je vytvorená. Na to existuje ďalšie rozhranie, kde sa definuje ID definície zariadenia a jeho meno a následne Vera vytvorí inštanciu zariadenia a priradí mu jednoznačné ID inštancie, podľa ktorého je možné sa dopytovať na stavové premenné alebo vykonávať operácie podľa algoritmov \ref{alg01} a \ref{alg02}. Toto bola ukážka ako programovať do špecifickej IoT brány, ktorá okrem obsluhy Z-Wave zariadení zvláda aj zariadenia komunikujúce s TCP protokolom a jeho nadstavbami (HTTP, RSS, ...), vďaka svojej mikrokernel (plugin) architektúre, kde hlavné jadro je implementované a kto čo potrebuje si môže v podobe pluginu naprogramovať a pridať do mikrokernel prostredia.  Ďalej to bola ukážka otvorenosti UPnP protokolu a možnosti definovania vlastných zariadení pomocou neho. Čo v sumáre predstavuje štandardom podporenú mikrokernel architektúru. Zariadenia vytvorené v práci sú dostupné pre využívanie používateľmi Vera zariadenia, prostredníctvom github platformy.
+\subsection{CaaS} \label{caas}
+Táto kapitola sa zameriava na vysvetlenie, motiváciu a popis implementácie myšlienky regulátor ako služba (Controller as a Service). Ako už bolo naznačené ide o vystavovanie služby regulovania procesu do cloud prostredia. Pre regulátory s nízkymi nárokmi na výpočet tento koncept nedáva zmysel. Dáva zmysel pre regulátory s veľkými požiadavkami na výkon. Medzi takéto patrí práve online metóda MPC algoritmu, ktorý si vyžaduje, ako je v prvých kapitolách naznačené, prácu s veľkými maticami ich násobenie, inverzia...  Práve postup v práci priviedol k tomuto konceptu. Prvotné úvahy boli implementovať algoritmus popísaný v kapitole \ref{mpcalg} do jazyka, ktorý je blízky strojovému, aby bolo možné dať regulátor čo najbližšie procesu a teda ku zariadeniu, ktoré nemá veľký výpočtový výkon. Na toto boli použité konverzné metódy Matlab skriptov na spustiteľné súbory v jazyku C. Tieto pokusy neboli úspešné. Paralelne prebiehali aktivity implementácie MPC algoritmu na FPGA zariadenia, kde sa rovnako narážal na problem inverzie matíc a ďalších problémov, ktoré kvadratické programovanie prináša. Preto bol implementovaný explicitný - offline MPC regulátor. Tejto problematike sa venuje iná dizertačná práca. Predchádzajúce fakty a štúdium IoT architektúr priviedli na myšlienku caas. Dôvody, prečo bol volený implicitný - online MPC regulátor sú popísané na konci kapitoly \ref{offmpc}. Stručné opakovanie toho je, že v práci sa kládol dôraz, aby sa matematický model mohol pravidelne ,,synchronizovať`` s výstupmi systému a teda sa mohol model meniť v prípade potreby aj v každom kroku. Implementovaná aplikácia služby regulátora je na toto pripravená. Služba na online identifikáciu pre experiment nebola pripravená, kvôli svojej komplexnosti. Najskôr bolo potrebné overiť základnú myšlienku caas a ak sa tá ukáže ako zmysluplná, tak sa v budúcnosti implementuje aj služba online identifikácie, ktorá má rovnaké miesto v prostredí s vysokým výpočtovým výkonom a pamäťou.
+\subsubsection{Implementácia}
+Po vysvetlení myšlienky a jej motivácie nasleduje popis implementácie. Štúdiom architektúr a architektonických princípov bol zvolený aplikácie služby (service application) bez grafického rozhrania na základe mikroservice architektúry. Na rovnakom princípe je plán robiť službu identifikácie. Sú to ľahko oddeliteľné funkcionality s potrebou rozdielnej škálovateľnosti, preto je microservice architektúra najvhodnejší kandidát. Na obrázku \ref{35_schema} v časti na oblakom sú znázornené základne technológie, na ktorých je aplikácia postavená.
+\begin{itemize}
+  \item 
 \end{itemize} 
 
-
-TODO: plugin architektura RSS reader
-\subsection{CaaS} \label{caas}
-TODO: vysvetlit + doplnit motivaciu z uvodu
-testovane zariadenia 
-moznosti c++
-\subsubsection{Implementácia}
-TODO: micro service architektura
-TODO: service aplikacia
+TODO: testovane zariadenia 
 \subsubsection{Integrácia}
 TODO: novy modul
 \subsubsection{Experiment}
