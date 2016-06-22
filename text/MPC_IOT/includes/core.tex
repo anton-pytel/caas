@@ -1406,7 +1406,7 @@ TODO: co je continuous integration a ako zabezpecit
 
 \section{Implementácia}
 Praktická časť druhej fázy štúdia je zameraná na experimenty s IoT prostredím a architektúrou. Ide o IoT architektúru v inteligentnej domácnosti. Do existujúcej architektúry je zavedený nový pojem controller as a service (CaaS) - regulátor ako služba, ktorý je inšpirovaný inými IoT architektúrami v dvoch bodoch. Prvý bod je využitie potenciálu výpočtového výkonu serverov. Vstavané zariadenia sa ukázali ako nedostatočné pre vykonávanie online MPC výpočtu. Druhý bod je ovplyvňovanie akčného zásahu na základe výpočtu na serveri. Viac je popísane v časti \ref{caas}, teraz nasleduje popis IoT prostredia a architektúry.
-\subsection{Popis experimentálneho IoT prostredia}
+\subsection{Popis experimentálneho IoT prostredia} \label{iotenv}
 Vychádzajúc z obrázkov \ref{31_iot} a \ref{34_iot_fin} prostredie pozostáva z týchto prvkov.
 \begin{itemize}
 \item Fyzická vrstva - snímače.
@@ -1662,17 +1662,137 @@ Na obrázku je zariadenie s popisom \textit{Rss reading device} hlavné zariaden
 \end{figure} 
 Potom ako je všetko zadefinované, Vera poskytuje vývojárske rozhranie, kde sa spomínané súbory vložia a tým Vera pozná nové zariadenia, ktoré ma definované v XML súboroch, ktorých štruktúra je daná UPnP protokolom. Inštancia zariadenia však stále nie je vytvorená. Na to existuje ďalšie rozhranie, kde sa definuje ID definície zariadenia a jeho meno a následne Vera vytvorí inštanciu zariadenia a priradí mu jednoznačné ID inštancie, podľa ktorého je možné sa dopytovať na stavové premenné alebo vykonávať operácie podľa algoritmov \ref{alg01} a \ref{alg02}. Toto bola ukážka ako programovať do špecifickej IoT brány, ktorá okrem obsluhy Z-Wave zariadení zvláda aj zariadenia komunikujúce s TCP protokolom a jeho nadstavbami (HTTP, RSS, ...), vďaka svojej mikrokernel (plugin) architektúre, kde hlavné jadro je implementované a kto čo potrebuje si môže v podobe pluginu naprogramovať a pridať do mikrokernel prostredia.  Ďalej to bola ukážka otvorenosti UPnP protokolu a možnosti definovania vlastných zariadení pomocou neho. Čo v sumáre predstavuje štandardom podporenú mikrokernel architektúru. Zariadenia vytvorené v práci sú dostupné pre využívanie používateľmi Vera zariadenia, prostredníctvom github platformy.
 \subsection{CaaS} \label{caas}
-Táto kapitola sa zameriava na vysvetlenie, motiváciu a popis implementácie myšlienky regulátor ako služba (Controller as a Service). Ako už bolo naznačené ide o vystavovanie služby regulovania procesu do cloud prostredia. Pre regulátory s nízkymi nárokmi na výpočet tento koncept nedáva zmysel. Dáva zmysel pre regulátory s veľkými požiadavkami na výkon. Medzi takéto patrí práve online metóda MPC algoritmu, ktorý si vyžaduje, ako je v prvých kapitolách naznačené, prácu s veľkými maticami ich násobenie, inverzia...  Práve postup v práci priviedol k tomuto konceptu. Prvotné úvahy boli implementovať algoritmus popísaný v kapitole \ref{mpcalg} do jazyka, ktorý je blízky strojovému, aby bolo možné dať regulátor čo najbližšie procesu a teda ku zariadeniu, ktoré nemá veľký výpočtový výkon. Na toto boli použité konverzné metódy Matlab skriptov na spustiteľné súbory v jazyku C. Tieto pokusy neboli úspešné. Paralelne prebiehali aktivity implementácie MPC algoritmu na FPGA zariadenia, kde sa rovnako narážal na problem inverzie matíc a ďalších problémov, ktoré kvadratické programovanie prináša. Preto bol implementovaný explicitný - offline MPC regulátor. Tejto problematike sa venuje iná dizertačná práca. Predchádzajúce fakty a štúdium IoT architektúr priviedli na myšlienku caas. Dôvody, prečo bol volený implicitný - online MPC regulátor sú popísané na konci kapitoly \ref{offmpc}. Stručné opakovanie toho je, že v práci sa kládol dôraz, aby sa matematický model mohol pravidelne ,,synchronizovať`` s výstupmi systému a teda sa mohol model meniť v prípade potreby aj v každom kroku. Implementovaná aplikácia služby regulátora je na toto pripravená. Služba na online identifikáciu pre experiment nebola pripravená, kvôli svojej komplexnosti. Najskôr bolo potrebné overiť základnú myšlienku caas a ak sa tá ukáže ako zmysluplná, tak sa v budúcnosti implementuje aj služba online identifikácie, ktorá má rovnaké miesto v prostredí s vysokým výpočtovým výkonom a pamäťou.
+Táto kapitola sa zameriava na vysvetlenie, motiváciu a popis implementácie myšlienky regulátor ako služba (Controller as a Service). Ako už bolo naznačené ide o vystavovanie služby regulovania procesu do cloud prostredia. Kedy na servery je uložený matematický model regulátora a na požiadavku vie vrátiť akčný zásah pre daný regulátor v danom stave. Od klienta sa očakáva, že vie obsluhovať HTTP komunikáciu a základnú prácu s reťazcami, žiadne výpočty nevykonáva, len sa pravidelne spýta na akčný zásah. Pre regulátory s nízkymi nárokmi na výpočtovú kapacitu tento koncept nedáva zmysel, iba to že môže byť veľa inštancií. Dáva zmysel pre regulátory s veľkými požiadavkami na výkon. Medzi takéto patrí práve online metóda MPC algoritmu, ktorý si vyžaduje, ako je v prvých kapitolách naznačené, prácu s veľkými maticami ich násobenie, inverzia...  Práve postup v práci priviedol k tomuto konceptu. Prvotné úvahy boli implementovať algoritmus popísaný v kapitole \ref{mpcalg} do jazyka, ktorý je blízky strojovému, aby bolo možné dať regulátor čo najbližšie procesu a teda ku zariadeniu, ktoré nemá veľký výpočtový výkon. Na toto boli použité konverzné metódy Matlab skriptov na spustiteľné súbory v jazyku C. Tieto pokusy neboli úspešné. Paralelne prebiehali aktivity implementácie MPC algoritmu na FPGA zariadenia, kde sa rovnako narážal na problem inverzie matíc a ďalších problémov, ktoré kvadratické programovanie prináša. Preto bol implementovaný explicitný - offline MPC regulátor. Tejto problematike sa venuje iná dizertačná práca. Predchádzajúce fakty a štúdium IoT architektúr priviedli na myšlienku caas. Dôvody, prečo bol volený implicitný - online MPC regulátor sú popísané na konci kapitoly \ref{offmpc}. Stručné opakovanie toho je, že v práci sa kládol dôraz, aby sa matematický model mohol pravidelne ,,synchronizovať`` s výstupmi systému a teda sa mohol model meniť v prípade potreby aj v každom kroku. Implementovaná aplikácia služby regulátora je na toto pripravená. Služba na online identifikáciu pre experiment nebola pripravená, kvôli svojej komplexnosti. Najskôr bolo potrebné overiť základnú myšlienku caas a ak sa tá ukáže ako zmysluplná, tak sa v budúcnosti implementuje aj služba online identifikácie, ktorá má rovnaké miesto v prostredí s vysokým výpočtovým výkonom a pamäťou.
 \subsubsection{Implementácia}
-Po vysvetlení myšlienky a jej motivácie nasleduje popis implementácie. Štúdiom architektúr a architektonických princípov bol zvolený aplikácie služby (service application) bez grafického rozhrania na základe mikroservice architektúry. Na rovnakom princípe je plán robiť službu identifikácie. Sú to ľahko oddeliteľné funkcionality s potrebou rozdielnej škálovateľnosti, preto je microservice architektúra najvhodnejší kandidát. Na obrázku \ref{35_schema} v časti na oblakom sú znázornené základne technológie, na ktorých je aplikácia postavená.
+Po vysvetlení myšlienky a jej motivácie nasleduje popis implementácie. Štúdiom architektúr a architektonických princípov bol zvolený aplikácie služby (service application) bez grafického rozhrania na základe mikroservice architektúry. Na rovnakom princípe je plán robiť službu identifikácie. Sú to ľahko oddeliteľné funkcionality s potrebou rozdielnej škálovateľnosti, preto je microservice architektúra najvhodnejší kandidát. Na obrázku \ref{35_schema} v časti nad oblakom sú znázornené základne technológie, na ktorých je aplikácia postavená.
 \begin{itemize}
-  \item 
+  \item V prvom rade sú to nástroje Matlab a Octave. V prvej časti štúdia bol čas venovaný vyladeniu MPC algoritmu v prostredí Matlab pre SISO aj MIMO systémy, s obmedzeniami na vstupné a výstupné veličiny a ich zmeny atď. funkcionalita popísaná v  kapitole \ref{mpcalg}. Toto sa zobralo ako základ pre optimálnu prácu s maticami a pripravil sa interface na vystavenie tejto funkcionality REST architektonickým štýlom. Pri pokusoch o vytvorenie C programu, ktorý sa testoval na Raspberry Pi zariadení Matlab nebolo možné nainštalovať, preto sa zobrala jeho open-source verzia Octave. Pri pokusoch došlo ku optimalizácii algoritmu, aby fungoval aj pre Octave, na čo bolo potrebné niekoľko minoritných zmien. Takže nasadzovaní si používateľ môže zvoliť, ktorú aplikáciu chce.
+  \item Ďalšia súčasť aplikácie je dokumentová NoSQL databáza MongoDB, ktorá zo sebou prinášala výhodu, že nie je potrebné definovať tabuľky a ich stĺpce ako je to pri relačných databázach, ale len ukladá matematický model a sprievodné údaje podľa toho, ktoré sú pre aký regulátor potrebné. Ukladanie je vo forme JSON dokumentov.
+  \item Posledná súčasť je framework pre jazyk Java na vystavenie funkcionality prostredníctvom REST rozhrania s názvom Jersey. Táto časť tvorí prístupový bod pre klientov, ktorí na vstupe najskôr definujú matematický model a potom si v každom kroku vypýtajú akčný zásah, ktorý im služba vypočíta. Tento nástroj robí typovú striktnosť medzi vstupom od klienta a objektom, na ktorý sa to transformuje. Takže inými slovami robí preklad z JSON notácie na jednotlivé triedy. V tejto časti je integrované volanie dvoch predošlých súčastí. Rozhrania, ktoré aplikácia poskytuje pre klientov sú:
+  \begin{itemize}
+    \item POST c-a-a-s/rest/mpccontrollers \\
+Toto rozhranie slúži na zadanie regulátora do aplikácie. Príklad tela správy, ktorá je potrebné poslať na server je v algoritme \ref{alg04}.   
+\begin{algorithm}
+\lstset{
+    language=XML,
+    basicstyle=\small\sffamily,
+    frame=none,
+    numbers=left,
+    xleftmargin=5.0ex,
+    numberstyle=\tiny,
+    stepnumber=1,
+    showstringspaces=false,
+    keywordstyle=\color{blue}\bfseries
+    }
+\lstset{emph={%  Adjust any special keywords
+    printf%
+    },emphstyle={\color[rgb]{1,0,0}\bfseries}%
+}%
+\begin{lstlisting}
+{
+    "CtlSys": {
+        "Ss" : {
+            "SysA" : { "Val" : [ [-1, 0], [1, 0] ] },
+            "SysB" : { "Val" : [ [1], [0] ] },
+            "SysC" : { "Val" : [ [0, 1] ] },
+            "SysD" : { "Val" : [ [0]] }
+        }
+    },
+    "CtlParam": {
+        "PredictHorizon": 10
+    }
+}
+\end{lstlisting}
+ \caption{Príklad tela HTTP požiadavky na definovanie MPC}
+ \label{alg04}
+\end{algorithm}  
+Možnosti zadania systému sú viaceré. Či už prostredníctvom stavového modelu alebo prenosovej funkcie zadanej reťazcom alebo vektormi čitateľa a menovateľa. Ostatné parametre ako obmedzenia systému, horizont predikcie atď. sú nepovinné. Ak sa nezadajú vygenerujú sa pre nich default hodnoty. Výstupom tohto volania  je vygenerované ID regulátora.
+    \item GET c-a-a-s/rest/mpccontrollers/\{id\} \\
+Ak už klient pozná ID regulátora, tak pomocou tohto rozhrania je možné si pozrieť detail uloženého objektu. Na výstupe je JSON dokument uložený v databáze, ktorý reprezentuje všetky údaje o regulátore.
+    \item POST c-a-a-s/rest/mpccontrollers/\{id\}/steps
+Pomocou tohto rozhrania vie klient požiadať o ďalší riadiaci zásah. Zadanie periódy vzorkovania a jej dodržiavanie v zmysle pravidelného volania je plne na zodpovednosti klienta. Výstupom je ID kroku, ktoré je inkrementálne na rozdiel od ID regulátora a vo výstupnom JSON objekte je aj riadiaci zásah, ktorý je potrebné nastaviť akčnému členu.
+    \item GET c-a-a-s/rest/mpccontrollers/\{id\}/steps/\{id\}       
+Ak je potrebné pozrieť kroky v minulosti, tak je to možné pomocou  tohto rozhrania.  
+  \end{itemize} 
+Diagram tried teda parametrov a ich typov, s ktorými aplikáciu uvažuje a je možné ich zadať do aplikácie, či pre regulátor alebo krok riadenia, je na obrázku \ref{39_class}. 
 \end{itemize} 
+\begin{landscape}
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.5\textwidth]{39_class.png}
+\caption{Diagram tried vstupného rozhrania.}
+\label{39_class}
+\end{figure} 
+\end{landscape}
 
-TODO: testovane zariadenia 
+Funkcionalita, ktorú musí rozhranie spraviť pri vytváraní inštancie regulátora a rovnako aj pri výpočte akčného zásahu pozostáva z týchto krokov:
+\begin{enumerate}
+  \item Inicializácia nenastavených default premenných.
+  \item Uloženie do Mongo databázy, ktorá vygeneruje ID záznamu, ktoré figuruje ako ID regulátora.
+  \item  Pred výpočtom sa uloží JSON do súboru.  
+  \item Nasleduje volanie výpočtového systému Matlab alebo
+   Octave, ktorý načíta uložený súbor, pomocou pluginu Jsonlab \cite{IOT29}, ktorý vie s JSON objektu spraviť Matlab/Octave dátové typy a naopak.
+  \item Nasleduje krok v Matlab/Octave nástroji, kde prebehne výpočet podľa \ref{mpcalg}, či už inicializácia systému alebo výpočet akčného zásahu. Na konci výpočtu sa dátové typy uložia do súboru pomocou Jsonlab vo forme JSON objektu.
+  \item Späť v Java aplikácii sa súbor načíta a spraví z neho inštancia príslušnej triedy. 
+  \item Upravený objekt sa uloží do databázy.
+  \item Ten istý objekt sa pošle používateľovi na výstup.
+\end{enumerate} 
+Pri implementácii boli komplikácie s načítavaním objektu so súboru, ktorý ukladal Jsonlab. Chýbala typová striktnosť, takže sa stalo, že z premennej typu vektor v Java aplikácii sa v Matlab/Octave stalo obyčajné číslo, ak tam bol len jeden prvok. Pri ukladaní do súboru sa vynechala vektorová notácia pri a  vytváraní objektu vektorová notácia bola očakávaná.\\
+\indent Problem bol s volaním Matlab, ktorý sa nepodarilo spustiť pod použivateľom, ktorý je prihláseny ako vlastník procesu aplikačného serveru, na ktorom je aplikácia spustená. Preto bol potrebný Python Interface, ktorým sa Matlab podarilo spustiť. Veľkú časť výpočtového času zaberá spustenie aplikácie Matlab. Preto bola vyskúšaná verzia spustenia Octave na Linux prostredí a čas výpočtu sa skrátil zo 14 sekúnd v priemere na 4 sekundy v priemere. Pritom zariadenie s Linuxom bolo oveľa menej výkonné. Porovnanie parametrov v tabuľke  \ref{table:2}.
+\begin{table}[h!]
+\centering
+ \caption{Porovnanie testovaných prostredí.}
+ \begin{tabular}{ |p{4cm}|p{5.5cm}p{5.5cm}| } 
+ \hline
+ Procesor typ: & Intel Core i5-2520M & Intel Celeron M \\ 
+  \hline
+ Procesor frekvencia &  2.5GHz  & 1.46GHz   \\ 
+ \hline
+ Operačná pamäť: & 8GB & 2GB  \\ 
+ \hline
+ Disk & SSD & HDD \\
+ \hline
+ Operačný systém & Windows 8.1 & Debian 8 \\ 
+ \hline
+ Aplikácia & Matlab 2015 & Octave 3.6.2 \\  
+ \hline
+\end{tabular}
+\label{table:2}
+\end{table}
+Tento fakt naznačuje preferenciu používania Octave verzie. 4 sekundy sa stále môžu zdať veľa, preto treba upozorniť, že je potrebný test na reálnych cloud zariadeniach. Pri  načítaní regulátora z databázy je výsledok okolo 400 ms na slabšom zo spomínaných prostrediach. Preto sa dajú očakávať lepšie časy odpovede a teda je možné riadiť procesy s periódou vzorkovania rádovo desiatky milisekúnd. Spôsob garancie odpovede do určitého času a núdzový režim v prípade sieťového výpadku nie je v práci riešený.
 \subsubsection{Integrácia}
-TODO: novy modul
+Pre službu regulátora vystavenú v časti IoT Backend je v rámci práce vytvorený klient v prostredí popísanom v kapitole \ref{iotenv}. Postup vytvorenia klienta aj súčasti potrebné na implementáciu sú podobné. Rýchle opakovanie súčastí: je potrebná časť na komunikáciu a operácie s textom. Teraz nie je XML správa, ale JSON, ku ktorému tiež na internete existuje knižnica \cite{IOT30}, ktorá bola použitá na spracovanie JSON odpovedí. Princíp ostáva podobný, vyskladať a zavolať požiadavku a spracovať odpoveď najskôr pre regulátor a potom cyklicke pre jednotlivé kroky.\\
+\indent Softvérové zariadenie vytvorené v práci je definované ako \textit{urn:demo-micasaverde-com:device:MpcClient:1} so službou \textit{urn:demo-micasaverde-com:serviceId:MpcControl1}. Stavových premenných je tu viac ako v prípade RSS Reader zariadenia. Venovať sa bude iba najdôležitejším. Spôsob vytvorenia inštancie zariadenia je rovnaký ako pre RSS Reader. Výhodou tohto prístupu je, že je možné vytvoriť viacero inštancií a riadiť nimi viacero akčných členov. Rozhranie na zadávanie parametrov a spustenie riadenia je na obrázku  \ref{40_mpccli}.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.85\textwidth]{40_mpccli.png}
+\caption{Rozhranie na zadávanie parametrov regulátora.}
+\label{40_mpccli}
+\end{figure} 
+Nachádza sa tam
+\begin{itemize}
+  \item vstup pre prenosovú funkciu.
+  \item Vstup pre zadanie URL služby.
+  \item Zobrazenie ID regulátora.
+  \item Tlačítko na vypnutie/povolenie riadenia.
+  \item Vstup pre zadanie periódy vzorkovania, ktorá zároveň identifikuje ako často sa bude volať služba na načítanie akčného zásahu.
+  \item Vstupy na definovanie zariadenia, ktoré bude regulátorom ovládané.  
+  \begin{itemize}
+    \item ID inštancie zariadenia.
+    \item ID služby.    
+    \item ID operácie.    
+    \item Meno vstupnej premennej do operácie.
+  \end{itemize} 
+  \item Vstupy na definovanie zariadenia, ktoré bude slúžiť na meranie výstupnej veličiny
+  \begin{itemize}
+    \item ID inštancie zariadenia.
+    \item ID služby.    
+    \item Meno meranej stavovej premennej.    
+  \end{itemize}     
+\end{itemize}
+
 \subsubsection{Experiment}
+
 TODO: popis zapojenia
 TODO: identifikacia
 TODO: grafy
