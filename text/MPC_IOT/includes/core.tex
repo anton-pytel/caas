@@ -1663,7 +1663,7 @@ Na obrázku je zariadenie s popisom \textit{Rss reading device} hlavné zariaden
 Potom ako je všetko zadefinované, Vera poskytuje vývojárske rozhranie, kde sa spomínané súbory vložia a tým Vera pozná nové zariadenia, ktoré ma definované v XML súboroch, ktorých štruktúra je daná UPnP protokolom. Inštancia zariadenia však stále nie je vytvorená. Na to existuje ďalšie rozhranie, kde sa definuje ID definície zariadenia a jeho meno a následne Vera vytvorí inštanciu zariadenia a priradí mu jednoznačné ID inštancie, podľa ktorého je možné sa dopytovať na stavové premenné alebo vykonávať operácie podľa algoritmov \ref{alg01} a \ref{alg02}. Toto bola ukážka ako programovať do špecifickej IoT brány, ktorá okrem obsluhy Z-Wave zariadení zvláda aj zariadenia komunikujúce s TCP protokolom a jeho nadstavbami (HTTP, RSS, ...), vďaka svojej mikrokernel (plugin) architektúre, kde hlavné jadro je implementované a kto čo potrebuje si môže v podobe pluginu naprogramovať a pridať do mikrokernel prostredia.  Ďalej to bola ukážka otvorenosti UPnP protokolu a možnosti definovania vlastných zariadení pomocou neho. Čo v sumáre predstavuje štandardom podporenú mikrokernel architektúru. Zariadenia vytvorené v práci sú dostupné pre využívanie používateľmi Vera zariadenia, prostredníctvom github platformy.
 \subsection{CaaS} \label{caas}
 Táto kapitola sa zameriava na vysvetlenie, motiváciu a popis implementácie myšlienky regulátor ako služba (Controller as a Service). Ako už bolo naznačené ide o vystavovanie služby regulovania procesu do cloud prostredia. Kedy na servery je uložený matematický model regulátora a na požiadavku vie vrátiť akčný zásah pre daný regulátor v danom stave. Od klienta sa očakáva, že vie obsluhovať HTTP komunikáciu a základnú prácu s reťazcami, žiadne výpočty nevykonáva, len sa pravidelne spýta na akčný zásah. Pre regulátory s nízkymi nárokmi na výpočtovú kapacitu tento koncept nedáva zmysel, iba to že môže byť veľa inštancií. Dáva zmysel pre regulátory s veľkými požiadavkami na výkon. Medzi takéto patrí práve online metóda MPC algoritmu, ktorý si vyžaduje, ako je v prvých kapitolách naznačené, prácu s veľkými maticami ich násobenie, inverzia...  Práve postup v práci priviedol k tomuto konceptu. Prvotné úvahy boli implementovať algoritmus popísaný v kapitole \ref{mpcalg} do jazyka, ktorý je blízky strojovému, aby bolo možné dať regulátor čo najbližšie procesu a teda ku zariadeniu, ktoré nemá veľký výpočtový výkon. Na toto boli použité konverzné metódy Matlab skriptov na spustiteľné súbory v jazyku C. Tieto pokusy neboli úspešné. Paralelne prebiehali aktivity implementácie MPC algoritmu na FPGA zariadenia, kde sa rovnako narážal na problem inverzie matíc a ďalších problémov, ktoré kvadratické programovanie prináša. Preto bol implementovaný explicitný - offline MPC regulátor. Tejto problematike sa venuje iná dizertačná práca. Predchádzajúce fakty a štúdium IoT architektúr priviedli na myšlienku caas. Dôvody, prečo bol volený implicitný - online MPC regulátor sú popísané na konci kapitoly \ref{offmpc}. Stručné opakovanie toho je, že v práci sa kládol dôraz, aby sa matematický model mohol pravidelne ,,synchronizovať`` s výstupmi systému a teda sa mohol model meniť v prípade potreby aj v každom kroku. Implementovaná aplikácia služby regulátora je na toto pripravená. Služba na online identifikáciu pre experiment nebola pripravená, kvôli svojej komplexnosti. Najskôr bolo potrebné overiť základnú myšlienku caas a ak sa tá ukáže ako zmysluplná, tak sa v budúcnosti implementuje aj služba online identifikácie, ktorá má rovnaké miesto v prostredí s vysokým výpočtovým výkonom a pamäťou.
-\subsubsection{Implementácia}
+\subsubsection{Implementácia} \label{seccaas}
 Po vysvetlení myšlienky a jej motivácie nasleduje popis implementácie. Štúdiom architektúr a architektonických princípov bol zvolený aplikácie služby (service application) bez grafického rozhrania na základe mikroservice architektúry. Na rovnakom princípe je plán robiť službu identifikácie. Sú to ľahko oddeliteľné funkcionality s potrebou rozdielnej škálovateľnosti, preto je microservice architektúra najvhodnejší kandidát. Na obrázku \ref{35_schema} v časti nad oblakom sú znázornené základne technológie, na ktorých je aplikácia postavená.
 \begin{itemize}
   \item V prvom rade sú to nástroje Matlab a Octave. V prvej časti štúdia bol čas venovaný vyladeniu MPC algoritmu v prostredí Matlab pre SISO aj MIMO systémy, s obmedzeniami na vstupné a výstupné veličiny a ich zmeny atď. funkcionalita popísaná v  kapitole \ref{mpcalg}. Toto sa zobralo ako základ pre optimálnu prácu s maticami a pripravil sa interface na vystavenie tejto funkcionality REST architektonickým štýlom. Pri pokusoch o vytvorenie C programu, ktorý sa testoval na Raspberry Pi zariadení Matlab nebolo možné nainštalovať, preto sa zobrala jeho open-source verzia Octave. Pri pokusoch došlo ku optimalizácii algoritmu, aby fungoval aj pre Octave, na čo bolo potrebné niekoľko minoritných zmien. Takže nasadzovaní si používateľ môže zvoliť, ktorú aplikáciu chce.
@@ -1760,8 +1760,8 @@ Pri implementácii boli komplikácie s načítavaním objektu so súboru, ktorý
 \label{table:2}
 \end{table}
 Tento fakt naznačuje preferenciu používania Octave verzie. 4 sekundy sa stále môžu zdať veľa, preto treba upozorniť, že je potrebný test na reálnych cloud zariadeniach. Pri  načítaní regulátora z databázy je výsledok okolo 400 ms na slabšom zo spomínaných prostrediach. Preto sa dajú očakávať lepšie časy odpovede a teda je možné riadiť procesy s periódou vzorkovania rádovo desiatky milisekúnd. Spôsob garancie odpovede do určitého času a núdzový režim v prípade sieťového výpadku nie je v práci riešený.
-\subsubsection{Integrácia}
-Pre službu regulátora vystavenú v časti IoT Backend je v rámci práce vytvorený klient v prostredí popísanom v kapitole \ref{iotenv}. Postup vytvorenia klienta aj súčasti potrebné na implementáciu sú podobné. Rýchle opakovanie súčastí: je potrebná časť na komunikáciu a operácie s textom. Teraz nie je XML správa, ale JSON, ku ktorému tiež na internete existuje knižnica \cite{IOT30}, ktorá bola použitá na spracovanie JSON odpovedí. Princíp ostáva podobný, vyskladať a zavolať požiadavku a spracovať odpoveď najskôr pre regulátor a potom cyklicke pre jednotlivé kroky.\\
+\subsubsection{Integrácia} \label{integ}
+Pre službu regulátora popísanú v predošlej časti a vystavenú v časti IoT Backend je v rámci práce vytvorený klient v prostredí popísanom v kapitole \ref{iotenv}. Postup vytvorenia klienta aj súčasti potrebné na implementáciu sú podobné. Rýchle opakovanie a popis a zmien v súčastiach oproti RSS Reader zariadeniu. Je potrebná časť na komunikáciu a operácie s textom. Teraz nie je XML správa, ale JSON, ku ktorému tiež na internete existuje knižnica \cite{IOT30}, ktorá bola použitá na spracovanie JSON odpovedí. Princíp ostáva podobný, vyskladať a zavolať požiadavku a spracovať odpoveď najskôr pre regulátor a potom cyklicky pre jednotlivé kroky, všetko v Lua jazyku vytvorené pre \textit{Luup} framework.\\
 \indent Softvérové zariadenie vytvorené v práci je definované ako \textit{urn:demo-micasaverde-com:device:MpcClient:1} so službou \textit{urn:demo-micasaverde-com:serviceId:MpcControl1}. Stavových premenných je tu viac ako v prípade RSS Reader zariadenia. Venovať sa bude iba najdôležitejším. Spôsob vytvorenia inštancie zariadenia je rovnaký ako pre RSS Reader. Výhodou tohto prístupu je, že je možné vytvoriť viacero inštancií a riadiť nimi viacero akčných členov. Rozhranie na zadávanie parametrov a spustenie riadenia je na obrázku  \ref{40_mpccli}.
 \begin{figure}[h]
 \centering
@@ -1790,13 +1790,69 @@ Nachádza sa tam
     \item Meno meranej stavovej premennej.    
   \end{itemize}     
 \end{itemize}
-
+Princíp fungovania je taký, že na začiatku sa inicializuje regulátor zadaním prenosovej funkcie, snímacieho zariadenia, vykonávacieho zariadenia a periódy vzorkovania.Regulátor sa uloží do IoT Backend a na klientovi sa vytvorí job, ktorý pravidelne v čase periódy vzorkovania zavolá IoT Backend, aby vrátil akčný zásah. Na vstupe je vždy nameraná hodnota zo snímacieho zariadenia, aby sa zabezpečila spätná väzba. Akčný zásah na výstupe je aplikovaný do akčného členu.
 \subsubsection{Experiment}
+Overenie myšlienky je uskutočnené v IoT systéme popísanom v kapitole \ref{iotenv}. Využíva sa IoT Backend popísaný v kapitole   \ref{seccaas} a klient v podobe softvérového zariadenia implementovaného do Vera IoT brány popísaný v kapitole \ref{integ}. Ide o riadenie procesu udržiavania žiadanej intenzity svetla  pomocou svetelného zdroja, ktorý je ovplyvňovaný univerzálnym stmievačom FIBARO FGD 211 a snímača intenzity svetla  Aeotec MultiSensor 4-in-1. Ako podklad dát na identifikáciu procesu poslúžilo softvérove zariadenie dataMine \cite{IOT31} - plugin do Vera zariadenia, ktoré umožňuje ukladať dáta zo zariadení a robiť z nich grafy. Forma ukladania dát je v podobe časová značka, hodnota. Dáta na identifikáciu systému je potrebné ešte upraviť. Keďže každé zariadenie má inú periódu vzorkovania, je potrebné ju zjednotiť. Nevýhoda snímača intenzity svetla bola, že minimálna vzorka bola každé 4 minúty, kvôli úspore batérie. Preto proces mohol mať minimálnu periódu vzorkovania 4 minúty, ktorá bola aj nastavená do softvérového zariadenia. Identifikácia dát prebehla manuálne. Dáta vytiahnuté z dataMine sa vložili do Matlab nástroja. Tam sa dáta upravili jednoduchým algoritmom  \ref{alg05},
+\begin{algorithm}
+\lstset{
+    language=C,
+    basicstyle=\small\sffamily,
+    frame=none,
+    numbers=left,
+    xleftmargin=5.0ex,
+    numberstyle=\tiny,
+    stepnumber=1,
+    showstringspaces=false,
+    keywordstyle=\color{blue}\bfseries
+    }
+\lstset{emph={%  Adjust any special keywords
+    printf%
+    },emphstyle={\color[rgb]{1,0,0}\bfseries}%
+}%
+\begin{lstlisting}
+function output=fillval(inputtime,inputvalue)
+output = zeros(1,floor(inputtime(length(inputtime))));
+for j=1:floor(inputtime(1))
+    output(j)=inputvalue(1);
+end
 
-TODO: popis zapojenia
-TODO: identifikacia
-TODO: grafy
-TODO: 
-pripad pouzitia udrziavanie intenzity
-pripad pouzitia teplota - upozornit na ekvitermiku
-pripad pouzitia
+for i=2:length(inputtime)
+    for j=floor(inputtime(i-1)):floor(inputtime(i))
+        output(j)=inputvalue(i-1);
+    end
+end
+\end{lstlisting}
+ \caption{Príprava dát na identifikáciu}
+ \label{alg05}
+\end{algorithm} 
+ktorý prešiel vzorku dát vstupných časov a vstupných hodnôt a do každej ,,medzery`` medzi hodnotami vložil poslednú nameranú hodnotu. To isté sa spravilo aj pre výstupný vektor časov a hodnôt, takže sa spravili vstupné a výstupné dáta s rovnakou periódou vzorkovania 1 minúta. Výstupom tohto procesu úpravy dát je graf \ref{41_measured_data}.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.85\textwidth]{41_measured_data.png}
+\caption{Namerané dáta experimentu.}
+\label{41_measured_data}
+\end{figure}
+Vstupná premenná je percento nastavené na stmievači hodnoty od 0 po 100\%. Výstup je hodnota zo snímača, ktorá dosiahla hodnoty 0 po približne 750 luxov. Tieto dáta sa dali do systému Matlab nástroja ident  na identifikáciu procesu. Výsledok identifikácie je naznačený v grafe \ref{42_ident}.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.85\textwidth]{42_ident.png}
+\caption{Identifikácia systému.}
+\label{42_ident}
+\end{figure}
+Z identifikovaných systémov sa použil systém ns4s6, pretože bol najnižšieho rádu v približne rovnakom percente zhody s ostatnými. Prenosová funkcia tohto systému je:
+\begin{equation} \label{eq40}
+\begin{split}
+ G = \frac{5.088 s^5 + 0.9643 s^4 + 2.52 s^3 + 4.551 s^2 + 1.321 s + 2.269}{  s^6 + 0.01112 s^5 + 0.2885 s^4 + 0.9443 s^3 + 0.1878 s^2 + 0.1482 s + 0.1376}
+\end{split}
+\end{equation}
+Výstup riadenia je znázornený v grafe \ref{43_vystup}.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.85\textwidth]{43_vystup.png}
+\caption{Graf výstupnej veličiny a žiadanej hodnoty.}
+\label{43_vystup}
+\end{figure}
+TODO: zmenit graf
+TODO: pridat hodnotenie kvality riadenia.
+
+Využitie tohto princípu je možné využiť napríklad na udržiavanie intenzity svetla so zapadajúcim slnkom. Rovnako je to možné využiť na regulovanie teploty a aj akýchkoľvek procesov, ktoré majú periódu vzorkovania 4 sekundy a viac. Ukážka prebehla na systéme so svetlom a nie s teplotou, pretože systéme je v byte a tam v čase pripravovania ukážky boli radiátory vypnuté.

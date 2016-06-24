@@ -6,8 +6,15 @@ inputdata=fillval(timei,vali);
 inputdata=inputdata(1:4:length(inputdata));
 outputdata=outputdata(1:4:length(outputdata));
 
-ss2tf(n4s6.a,n4s6.b,n4s6.c,n4s6.d)
+[num, den] =ss2tf(n4s6.a,n4s6.b,n4s6.c,n4s6.d)
 
 tf(num,den)
 
 % vysledok transfer function - pridat *(znamienko krat) a dat do regulatora
+
+
+
+% !!!!!!!!!!!!!!!! graf udajov 
+% nacitat regulator podla id cez Postaman
+% dat do suboru
+% spustit dataprepare2
