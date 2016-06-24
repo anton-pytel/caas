@@ -1,4 +1,4 @@
-\section{MPC regulátor}
+\section{Prediktívne metódy riadenia}
 Ako už bolo v úvode spomenuté, práca spája viacero odborov do jednej implementácie. Táto časť preto je venovaná návrhu a overenia MPC regulátora.
 \subsection{Teoretický základ MPC}
 V tejto časti sa vysvetlí história, matematický základ a variácie MPC regulátora.
@@ -956,7 +956,7 @@ a~použiteľný v~prostredí Matlab. Názov je MPT toolbox. Je to dielo
 inštitútu pre automatizáciu vo Švajčiarsku. Tento program je jeden
 z~najpouživanejších v~prostredí Matlab. Nasleduje overenie algoritmu na reálnom systéme z praxe, ktorý je popísaný v nasledujúcej podkapitole. Následne je identifikovaný matematický model systému a overenie funkčnosti MPC princípov. Treba spomenúť, že overenie je stále prostredníctvom simulácie v prostredí Matlab.
 
-\subsubsection{Popis systému riadenia plynovej turbíny}
+\subsubsection{Opis systému riadenia plynovej turbíny}
 Turbína s~výkonom 1.5MW obsahuje tri hlavné časti, menovite, kompresor,
 spaľovaciu komorou a~vysokotlakovú turbínu. V~rokoch 1950 bolo
 priemyselné využitie turbín významne rozšírené, kvôli jej nespočetným
@@ -1065,9 +1065,9 @@ sekundách je nastavený na hodnotu 450 rps.
 Z~výsledkov je možné vidieť výhody prediktívneho riadenia. Keďže
 prediktívny regulátor je založený na optimalizácii, je možné vidieť
 minimálne akčné zásahy, čo môže viesť k~úspore spotreby.\cite{MPC08}\\
-Týmto končí simulačné overovanie algoritmu MPC regulátora vytvoreného na základe teoretických princípov popísaných v úvodných kapitolách MPC regulátora a nasleduje druhá časť práce, ktorá pripraví podklady pre praktický experiment.
+Týmto končí simulačné overovanie algoritmu MPC regulátora vytvoreného na základe teoretických princípov popísaných v úvodných kapitolách MPC regulátora a nasleduje druhá časť práce, ktorá pripraví podklady pre  praktický experiment, ktorý zahŕňa definíciu prostredia IoT.
 
-\section{Softvérová Architektúra}
+\section{Softvérové Architektúry}
 Téma softvérovej architektúry (Software architectrue) zahŕňa veľa súčastí. Práca sa zameriava len na tie časti, ktoré vedú do problematiky internetu vecí a teda nepojednáva o všetkých aspektoch tejto problematiky. Nasleduje niekoľko definícií a vymenovanie typov aplikácii. 
 
 \indent Softvérová architektúra je proces definovania štrukturovaného riešenia, ktoré spĺňa všetky technické a operačné požiadavky, zatiaľ čo optimalizuje bežné kvalitatívne vlastnosti ako je výkonnosť, bezpečnosť a ovládateľnosť. Zahŕňa rad rozhodnutí, ktoré sú založené na viacerých faktoroch a každé z týchto rozhodnutí môže mať značný dopad na kvalitu, výkonnosť, udržiavanie a celkový úspech aplikácie.
