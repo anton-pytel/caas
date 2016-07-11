@@ -39,7 +39,7 @@ switch funcType
                     %G = tf( {1.467 -0.7322; -0.4399 1.19 },{[1.029 1] [1.161 1]; [1.404 1] [0.5369 1]});
                     G= tf(num, den);
             end
-            [inp_del,a,b,c,d]=mpc_system(T,Delay,G);
+            [inp_del,a,b,c,d]=mpc_system(T,Delay,G,xJson.ctlSys.tfcn.sysType);
             %nech mame ulozeny state space
             yJson.ctlSys.ss.sysA.val=a;
             yJson.ctlSys.ss.sysB.val=b;
