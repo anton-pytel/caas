@@ -1,0 +1,9 @@
+  f(x) = a*exp(b*x) + c*exp(d*x)
+      Coefficients (with 95% confidence bounds):
+       a =        5244  (-1.329e+04, 2.378e+04)
+       b =     -0.1279  (-0.2297, -0.02605)
+       c =       123.2  (81.29, 165.2)
+       d =    -0.01074  (-0.01406, -0.007425)
+
+
+/dataMine2/database/135/config.json
