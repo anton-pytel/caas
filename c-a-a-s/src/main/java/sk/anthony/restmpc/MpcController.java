@@ -165,7 +165,7 @@ public class MpcController {
 		}
 		//convert the json string back to object
 		xMC = gson.fromJson(br, MpcController.class);
-		if (PropertyFile.prop.getProperty("logging").toString() != LOG_OPTION) {
+		if (!PropertyFile.prop.getProperty("logging").toString().equals(LOG_OPTION) ) {
 			new File(filename).delete();
 		}
 		return xMC;

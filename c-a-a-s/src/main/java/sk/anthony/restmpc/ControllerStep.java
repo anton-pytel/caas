@@ -136,7 +136,7 @@ public class ControllerStep {
 		}
 		//convert the json string back to object
 		ControllerState cs = gson.fromJson(br, ControllerState.class);
-		if (PropertyFile.prop.getProperty("logging").toString() != LOG_OPTION) {
+		if (!PropertyFile.prop.getProperty("logging").toString().equals(LOG_OPTION)) {
 			new File(filename).delete();
 			new File(filename1).delete();
 		}
