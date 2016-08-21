@@ -174,22 +174,22 @@
 				 				 \def\@rok{#3}}
 \newcommand{\printDatum}{\@den.\@mesiac.\@rok}
 
-\def\@studijnyProgram{TODO: program kybernetika/mechatronika}
+\def\@studijnyProgram{mechatronické systémy}
 \def\FEIstudyProgramme#1{\def\@studijnyProgram{#1}}
 \newcommand{\printStudijnyProgram}{\@studijnyProgram}
-\def\@studijnyProgramEn{TODO: en program kybernetika/mechatronika}
+\def\@studijnyProgramEn{Mechatronic Systems}
 \def\FEIstudyProgrammeEn#1{\def\@studijnyProgramEn{#1}}
 \newcommand{\printStudijnyProgramEn}{\@studijnyProgramEn}
 
-\def\@cisloStudijnehoOdboru{TODO: XXX cislo }
+\def\@cisloStudijnehoOdboru{FEI-100861-35740}
 \def\FEIstudyFieldNumber#1{\def\@cisloStudijnehoOdboru{#1}}
 \newcommand{\printCisloStudijnehoOdboru}{\@cisloStudijnehoOdboru}
 
-\def\@nazovStudijnehoOdboru{TODO: cislo a nazov programu}
+\def\@nazovStudijnehoOdboru{5.2.16. mechatronika}
 \def\FEIstudyField#1{\def\@nazovStudijnehoOdboru{#1}}
 \newcommand{\printNazovStudijnehoOdboru}{\@nazovStudijnehoOdboru}
 
-\def\@nazovStudijnehoOdboruEn{TODO: program number and name}
+\def\@nazovStudijnehoOdboruEn{5.2.16. Mechatronics}
 \def\FEIstudyFieldEn#1{\def\@nazovStudijnehoOdboruEn{#1}}
 \newcommand{\printNazovStudijnehoOdboruEn}{\@nazovStudijnehoOdboruEn}
 
@@ -197,7 +197,7 @@
 \def\FEItrainingWorkplace#1{\def\@skoliacePracovisko{#1}}
 \newcommand{\printSkoliacePracovisko}{\@skoliacePracovisko}
 
-\def\@skoliacePracoviskoEn{Institute of of Automotive Mechatronics}
+\def\@skoliacePracoviskoEn{Institute of Automotive Mechatronics}
 \def\FEItrainingWorkplaceEn#1{\def\@skoliacePracoviskoEn{#1}}
 \newcommand{\printSkoliacePracoviskoEn}{\@skoliacePracoviskoEn}
 
