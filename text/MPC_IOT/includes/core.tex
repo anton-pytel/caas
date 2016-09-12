@@ -1,13 +1,13 @@
 \section{Prediktívne metódy riadenia}
-Na začiatok, si povieme, čo je prediktívne riadenie a čo je základ prediktívneho riadenia.\\
+Na začiatku je uvedená charakteristika a princípy prediktívneho riadenia a čo je základ prediktívneho riadenia.\\
 \indent Prediktívne riadenie (MPC, model predictive controller) je pokročilá metóda riadenia založená na optimalizácii, ktorá bola využívaná na aplikáciu v systémoch s pomalou dynamikou, napríklad v chemických, či petrochemických procesoch. Na rozdiel od lineárno-kvadratického regulátora, MPC na optimálne riadenie ponúka explicitné ošetrenie procesných obmedzení, ktoré vznikajú z prirodzených požiadaviek, napríklad efektivita nákladov, bezpečnostné obmedzenia akčných členov a iné.\cite{MPC01} \\
 \indent Hlavná výhoda prediktívneho regulátora je, že je riešený ako optimalizačný problém, takže sa snaží minimalizovať okrem iného hlavne potrebný riadiaci zásah na dosiahnutie žiadaného výstupu riadeného systému. Ďalšia výhoda pri riešení optimalizačného problému je, že sa jednoducho môžu zadať ohraničenia systému. Rôzne obmedzenia môžu byť aplikované na riadený systém a napriek tomu môže byť systém riaditeľný s minimálnym riadiacim zásahom. Táto metóda riadenia môže byť prirovnaná k prepočítavaniu ťahov v šachu. Pri prepočítavaní sa ráta s tým, čo sa môže udiať v čase v závislosti od poznania procesu, pri šachovej hre podľa jej pravidiel a podľa toho optimalizovať riadiace zásahy, ťahy v šachu, aby sa dosiahol najlepší výsledok z dlhodobého hľadiska, v prípade šachu, to je vyhratá partia. Pri MPC regulátoroch sa dá predísť javom, ktoré sa vyskytujú pri konvenčných regulátoroch ako PID, ako sú riadiace zásahy, ktoré dosahujú dobré výsledky z krátkodobého hľadiska, ale v konečnom dôsledku sa prejavia ako vysoko nákladné. Tento jav môže byť pomenovaný ako ,,vyhrať bitku, ale prehrať vojnu``. \\ 
 \indent Ďalšie výhody MPC regulátora sú také, že jednoducho vedia riadiť viac premenné systémy a ako už bolo spomenuté, zahrnúť obmedzenia systému – výstupu, riadiaceho zásahu, stavu systému, už pri návrhu regulátora. MPC regulátor obsahuje viacero premenných, pomocou, ktorých je možné ho vyladiť takmer pre každý proces. \\
 \indent Medzi nevýhody MPC regulátora patrí napríklad to, že niektoré MPC modely sú limitované len na stabilný proces v otvorenej slučke. Často vyžadujú veľký počet koeficientov modelu na opis odozvy systému. Niektoré MPC modely zase sú formulované na  rušenie na výstupe a tie by ťažko mohli zvládnuť poruchy na vstupe. Niektoré MPC modely sú zase upravované na výstupe, pretože model nie je totožný s reálnym systémom. Tieto modely sú zvyčajne upravené o konštantu, podľa nameraných údajov, nerátajú však s tým, že táto zmena na výstupe sa môže v budúcnosti zmeniť, čo môže mať za následok, že finálny výsledok nebude optimálny. Taktiež ak horizont predikcie nie je zvolený správne, tak riadenie nebude optimálne aj keď model systému správny bude. Niektoré systémy majú širokú škálu prevádzkových podmienok, ktoré sa často menia. Medzi príklady patria exotermické reaktory, procesy na dávkové spracovanie a tiež systémy, kde rôzny spotrebitelia majú rôzne špecifikácie produktov. Lineárne modely MPC regulátorov nie sú schopné zvládnuť dynamické správanie týchto procesov, preto musí byť použitý nelineárny model pre lepšie riadenie.\cite{MPC02} 
 \subsection{Teoretický základ MPC}
-V tejto časti sa vysvetlí história, matematický základ a variácie MPC regulátora.
+V tejto časti je vysvetlená história, matematický základ a variácie MPC regulátora.
 \subsubsection{On-line MPC}
-Prediktívny regulátor je, na najnižšej úrovni, metóda riadenia dynamických systémov, ktorá využíva nástroje matematickej optimalizácie. Spoločné črty všetkých prístupov riešenia problému prediktívnych regulátorov je vypočítať on-line, v každej časovej vzorke,  optimálny riadiaci zásah v konečnom horizonte predikcie pre dynamický model systému, kde aktuálny stav je počiatočný stav. Iba prvý element z vypočítanej sekvencie predikovaných riadiacich zásahov je potom aplikovaný na systém. V ďalšom okamihu vzorkovania je horizont predikcie posunutý a výpočet optimálneho riadiaceho zásahu je vykonávaný znovu pre novonadobudnutý stav. Táto myšlienka nie je nová, už v článku od Lee a Markus (1967), je možné nájsť nasledujúce tvrdenie: ,,Jedna technika na návrh regulátora so spätnou väzbou zo znalosti regulátora pre otvorenú slučku je merať aktuálny stav riadenia procesu a veľmi rýchlo vypočítať funkciu riadenia pre otvorenú slučku. Prvá časť tejto funkcie je potom využitá počas krátkeho intervalu, po ktorom je opäť zmeraný stav procesu a k nemu vypočítaná riadiaca funkcia pre otvorenú slučku. Táto procedúra je potom opakovaná.`` Technika popisovaná v článku od Lee a Markus (1967) je zvyčajne označovaná ako ,,Receding Horizon Control`` (RHC) – ,,Postupujúci horizont riadenia`` a dnes je viac-menej používaný ako synonymum k pojmu ,,Model Predictive Control`` – ,,Prediktívne riadenie``. \cite{MPC03} Popisovaný princíp je znázornený na obrázku \ref{01_rec_horizon}.
+Prediktívny regulátor je, na najnižšej úrovni, metóda riadenia dynamických systémov, ktorá využíva nástroje matematickej optimalizácie. Spoločné črty všetkých prístupov riešenia problému prediktívnych regulátorov je vypočítať on-line, v každej časovej vzorke,  optimálny riadiaci zásah v konečnom horizonte predikcie pre dynamický model systému, kde aktuálny stav je počiatočný stav. Iba prvý element z vypočítanej sekvencie predikovaných riadiacich zásahov je potom aplikovaný na systém. V ďalšom okamihu vzorkovania je horizont predikcie posunutý a výpočet optimálneho riadiaceho zásahu je vykonávaný znovu pre novonadobudnutý stav. Táto myšlienka nie je nová, už v článku od Lee a Markus (1967), je možné nájsť nasledujúce tvrdenie: ,,Jedna technika na návrh regulátora so spätnou väzbou zo znalosti regulátora pre otvorenú slučku je merať aktuálny stav riadenia procesu a veľmi rýchlo vypočítať funkciu riadenia pre otvorenú slučku. Prvá časť tejto funkcie je potom využitá počas krátkeho intervalu, po ktorom je opäť zmeraný stav procesu a k nemu vypočítaná riadiaca funkcia pre otvorenú slučku. Táto procedúra je potom opakovaná.`` Technika opisovaná v článku od Lee a Markus (1967) je zvyčajne označovaná ako ,,Receding Horizon Control`` (RHC) – ,,Postupujúci horizont riadenia`` a dnes je viac-menej používaný ako synonymum k pojmu ,,Model Predictive Control`` – ,,Prediktívne riadenie``. \cite{MPC03} Opisovaný princíp je znázornený na obrázku \ref{01_rec_horizon}.
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.75\textwidth]{01_rec_horizon.png}
@@ -121,7 +121,7 @@ x_{02} \\
 \end{bmatrix}
 \end{split}
 \end{equation}
-Matice V~a~T budú vyzerať:
+Matice V~a~T vyzerajú:
 \begin{equation} \label{eq8}
 \begin{split}
 V = \begin{bmatrix}
@@ -781,7 +781,7 @@ a spojitá kvadratická funkcia
 Týmto sa presunula numerická výpočtová náročnosť optimalizácie \ref{eq13} k~off-line výpočtom. V~priebehu riadenia stačí identifikovať región CR\textsubscript{i}, obsahujúci aktuálny stav x(t) a~aplikovať príslušný
 zákon riadenia \label{eq36}. \cite{MPC05} \\
 Takýmto spôsobom je možné rozdeliť výpočtovú zložitosť na dve časti. Prvá, výpočtovo zložitejšia, časť je hľadanie kritických regiónov, ktorá sa môže uskutočniť pred zavedením regulátora do behu. Tuto nie je čas kritický, pretože regulačný proces nebeží. Druhá časť je počas behu regulačného procesu. Tá predstavuje časovo nenáročnú operáciu vyhľadania kritického regiónu v pamäti a podľa neho vrátiť akčný zásah. Hlavná nevýhoda offline - explicitného riešenia je, že systém je jednorázovo daný a už počas behu nevstupuje do výpočtu na rozdiel od online riešenia, kde do každého kroku matematický model systému vstupuje a teda je možné  matematický model dynamicky adaptovať, aby čo najviac zodpovedal reálnemu systému. Pri voľbe spôsobu implementácie praktickej časti pre výučbu aj neskôr v IoT prostredí, tento fakt zavážil a zvolila sa online metóda implementácie.
-\subsection{Popis funkčnosti On-line MPC algoritmu} \label{mpcalg}
+\subsection{Opis funkčnosti On-line MPC algoritmu} \label{mpcalg}
 Vytvorený algoritmus sa skladá skladá z viacerých modulov - funkcií naprogramovaných v prostredí Matlab a prispôsobených na fungovanie v open source verzii Octave. Program bol vytvorený pre účely využitia v pedagogickom procese. Grafické rozhranie bolo vytvorené pomocou komponent Matlabu - Guide, ktorý slúži práve na vytváranie grafických rozhraní. Základné komponenty, z ktorých sa program skladá sú znázornené na obrázku \ref{16_com}.
 \begin{figure}[!htbp]
 \centering
@@ -1045,7 +1045,7 @@ predstavuje referenčný signál a~červené čiarkované čiary sú obmedzenia.
 \label{15_paramt}
 \end{figure}
 
-Prenosová funkcia \ref{eq39} sa zadala do grafického rozhrania do pola
+Prenosová funkcia (\ref{eq39}) sa zadala do grafického rozhrania do pola
 „transfer function``. Horizont predikcie bol nastavený na 10 vzoriek
 dopredu. Zo simulácii vyplýva, že je to dostatočné a~efektívne, berúc do
 úvahy odozvu systému a~kvalitu riadenia. Váhy boli nastavené na
@@ -1105,6 +1105,7 @@ Jedno z kľúčových rozhodnutí je voľba typu architektúry. Tie najpoužíva
 \caption{4 vrstvová architektúra\cite{IOT06}}
 \label{24_4l}
 \end{subfigure}
+\caption{Rôzne počty vrstiev architektúry.}
 \end{figure}
 MVC (Model-View-Controller) štruktúra, ktorú poskytuje väčšina obľúbených frameworkov je zjavne N-vrstvová architektúra. Nad databázou je model, ktorý často obsahuje biznis logiku a informácie o type dát databáze. Na vrchu je zobrazovacia vrstva, ktorá často pozostáva z CSS, JavaScript a HTML. V strede je ovládač, ktorý má viacero pravidiel a funkcií na transformáciu dát zo zobrazovacej vrstvy do modelu.
  \item \textbf{ Architektúra riadená udalosťami.} Veľa programov trávi väčšinu času čakaním, kým sa niečo stane. Tento fakt špeciálne platí pre systémy, ktoré priamo spolupracujú  s ľuďmi, ale rovnako je to bežné aj v oblasti sietí.
@@ -1153,21 +1154,20 @@ Na zváženie:
    \item Závislé od platformy.
  \end{itemize}
 
+
 \begin{figure}[!htbp]
 \centering
-\begin{subfigure}{0.5\linewidth}
 \includegraphics[width=0.9\textwidth]{19_mob.png}
 \caption{Mobilná aplikácia \cite{IOT03}}
 \label{19_mob}
-\end{subfigure}%
-\begin{subfigure}{0.5\linewidth}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
 \includegraphics[width=0.9\textwidth]{20_cli.png}
 \caption{Clientská aplikácia \cite{IOT03}}
 \label{20_cli}
-\end{subfigure}
-\caption{}
 \end{figure}
-
  
 \item
  \textbf{Tučná internetová aplikácia obrázok \ref{21_ri}.} Aplikácie tohto typu sú vyvíjané tak, aby podporovali viacero platforiem a prehliadačov tak, že zobrazujú multimédia alebo iný grafický obsah. Tučné internetové aplikácie bežia v prehliadači, čím sú obmedzené pristupovať k niektorým zdrojom klienta. \\
@@ -1201,17 +1201,16 @@ Na zváženie:
  
 \begin{figure}[!htbp]
 \centering
-\begin{subfigure}{0.5\linewidth}
 \includegraphics[width=0.9\textwidth]{21_ri.png}
 \caption{Tučná internet aplikácia \cite{IOT03}}
 \label{21_ri}
-\end{subfigure}%
-\begin{subfigure}{0.5\linewidth}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
 \includegraphics[width=0.9\textwidth]{23_web.png}
 \caption{Web aplikácia \cite{IOT03}}
 \label{23_web}
-\end{subfigure}
-\caption{}
 \end{figure}
 
  \item
@@ -1259,6 +1258,7 @@ Súčastí môže byť samozrejme viac a každá organizácia si podľa svojich 
 \caption{SOA \cite{IOT13}}
 \label{27_soa}
 \end{subfigure}
+\caption{Porovnanie architektúr.}
 \end{figure}
 Existuje viacero spôsobov ako SOA implementovať. 
 \begin{itemize}
@@ -1324,7 +1324,7 @@ Na obrázku je možné vidieť súčasti, ktoré sme uviedli ako spoločné črt
 \caption{IoT architektúra \cite{IOT21}}
 \label{32_iotB}
 \end{subfigure}
-\caption{}
+\caption{Porovnanie tradičnej a IoT architektúry.}
 \end{figure}
 Tradičná priemyselná architektúra na posunutie dát do platformy informačných technológií (Information Technology - IT), ktorá vie robiť analýzu dát, poskytovať ich používateľovi aj vystavovať do cloud prostredia, používa vstavaný softvér na platforme obslužných technológií (Operational Technology - OT). IoT architektúra práve posúva väčšiu časť inteligencie systému z IT strany do OT strany. Toto umožňujú mikroprocesory a vstavané platformy s jednoduchým prístupom do cloud prostredia a rovnako s jednoduchým prístupom ku autorizovaným zariadeniam a používateľom. \cite{IOT21}. Táto definícia potvrdzuje to, čo sme už vyslovili, že ide o užšie prepojenie IT a OT. \\
 \indent Základné ciele IoT architektúr je teda zosnímané dáta čo najskôr, najbezpečnejšie a najspoľahlivejšie poslať ďalej na miesto, kde môžu prejsť analýzou, či už je to cloud alebo dosť často to býva aj samotný agregátor, ktorý má dostatočný výkon na určitý druh analýz a na základe analýzy ovplyvniť akčné členy, aby sa optimalizoval proces, náklady, zdroje atď. Aktuálny trend vo svete je, že  veľké technologické firmy sa snažia spraviť univerzálnu IoT platformu a podchytiť si tak čo najviac zákazníkov. Veľké firmy typu Microsoft, Amazon, HP už pripravili svoje platformy, ktoré sa líšia v použitých technológiách, ale princíp ostáva rovnaký. Na demonštráciu sa uvádza porovnanie dvoch hotových platforiem Azure IOT HUB od Microsoft a AWS IOT od Amazonu v tabuľke \ref{table:1} a na obrázku \ref{33_aa}.
@@ -1360,7 +1360,7 @@ Broadcom, Marvell, Renesas, Texas Instruments, Microchip, Intel, Mediatek, Qualc
 \caption{AWS IOT \cite{IOT22}}
 \label{33_aws}
 \end{subfigure}
-\caption{}
+\caption{Porovnanie IoT platforiem.}
 \label{33_aa}
 \end{figure}
 \indent Na portály Devexperience a stránke \cite{IOT22}, kde bolo porovnanie vykonané, definujú tieto súčasti IoT architektúry: \\
@@ -1721,7 +1721,7 @@ Z odpovede je možné vidieť, že takto by bolo možné osloviť ktorýkoľvek 
 
 
 \subsection{CaaS - Regulátor ako služba} \label{caas}
-Táto kapitola sa zameriava na vysvetlenie, motiváciu a popis implementácie myšlienky regulátor ako služba (Controller as a Service). Ako už bolo naznačené ide o vystavovanie služby regulovania procesu do cloud prostredia. Kedy na servery je uložený matematický model regulátora a na požiadavku vie server vrátiť akčný zásah pre daný regulátor v danom stave. Od klienta sa očakáva, že vie obsluhovať HTTP komunikáciu a základnú prácu s reťazcami, žiadne výpočty nevykonáva, len sa pravidelne spýta na akčný zásah. Pre regulátory s nízkymi nárokmi na výpočtovú kapacitu tento koncept nepridáva hodnotu výpočtového výkonu serveru, iba možnosť uloženia veľa inštancií, takže sa môže využiť iba pamäťová kapacita servera. Tento princíp dáva zmysel hlavne pre regulátory s veľkými požiadavkami na výpočtový výkon. Medzi takéto patrí práve online metóda MPC algoritmu, ktorý si vyžaduje, ako je v prvých kapitolách naznačené, prácu s veľkými maticami ich násobenie a  inverzia. Až niekoľko neúspešných pokusov v postupe práce priviedli k tomuto konceptu. Prvotné úvahy boli implementovať algoritmus popísaný v kapitole \ref{mpcalg} do jazyka, ktorý je blízky strojovému, aby bolo možné dať regulátor čo najbližšie procesu a teda ku zariadeniu, ktoré nemá veľký výpočtový výkon. Na toto boli použité konverzné metódy Matlab skriptov na spustiteľné súbory v jazyku C. Tieto pokusy neboli úspešné. Paralelne prebiehali aktivity implementácie MPC algoritmu na FPGA zariadenia, kde sa rovnako narážal na problem inverzie matíc a ďalších problémov, ktoré kvadratické programovanie prináša. Preto bol pre FPGA implementovaný explicitný - offline MPC regulátor. Tejto problematike sa venuje iná dizertačná práca. Predchádzajúce fakty z oblasti softvérovej architektúry a štúdium IoT architektúr priviedli na myšlienku CaaS a teda proces riadený pomocou regulátora, uloženého a výpočty vykonávajúceho na vzdialenom servery. Dôvody, prečo bol volený implicitný - online MPC regulátor sú popísané na konci kapitoly \ref{offmpc}. Stručné opakovanie toho je, že v práci sa kládol dôraz, aby sa matematický model mohol pravidelne ,,synchronizovať`` s výstupmi systému a teda sa mohol model meniť v prípade potreby aj v každom kroku. Implementovaná aplikácia služby regulátora je pripravená na to, aby sa matematický model menil aj v každom kroku. Služba na online identifikáciu pre experiment nebola pripravená, kvôli svojej komplexnosti. Najskôr je potrebné overiť základnú myšlienku CaaS a ak sa tá ukáže ako zmysluplná, tak sa v budúcnosti implementuje aj služba online identifikácie, ktorá má rovnaké miesto v prostredí s vysokými nárokmi na výpočtovým výkon a pamäť. Touto kombináciou by prediktívne riadenie bolo doplnené o adaptívnu zložku. Zhrnutie aktuálneho princípu CaaS. CaaS poskytuje rozhranie na zadefinovanie regulátora a rozhranie na spýtanie sa na hodnotu akčného zásahu. Na vstup pri požiadavke na akčný zásah sa zadáva nameraná hodnota výstupu, aby bola zabezpečená spätná väzba. Ďalej na vstup ide žiadaná hodnota, teda referenčný signál, ktorý ma výstupná veličina sledovať.  
+Táto kapitola sa zameriava na vysvetlenie, motiváciu a opis implementácie myšlienky regulátor ako služba (Controller as a Service). Ako už bolo naznačené ide o vystavovanie služby regulovania procesu do cloud prostredia. Kedy na servery je uložený matematický model regulátora a na požiadavku vie server vrátiť akčný zásah pre daný regulátor v danom stave. Od klienta sa očakáva, že vie obsluhovať HTTP komunikáciu a základnú prácu s reťazcami, žiadne výpočty nevykonáva, len sa pravidelne spýta na akčný zásah. Pre regulátory s nízkymi nárokmi na výpočtovú kapacitu tento koncept nepridáva hodnotu výpočtového výkonu serveru, iba možnosť uloženia veľa inštancií, takže sa môže využiť iba pamäťová kapacita servera. Tento princíp dáva zmysel hlavne pre regulátory s veľkými požiadavkami na výpočtový výkon. Medzi takéto patrí práve online metóda MPC algoritmu, ktorý si vyžaduje, ako je v prvých kapitolách naznačené, prácu s veľkými maticami ich násobenie a  inverzia. Až niekoľko neúspešných pokusov v postupe práce priviedli k tomuto konceptu. Prvotné úvahy boli implementovať algoritmus popísaný v kapitole \ref{mpcalg} do jazyka, ktorý je blízky strojovému, aby bolo možné dať regulátor čo najbližšie procesu a teda ku zariadeniu, ktoré nemá veľký výpočtový výkon. Na toto boli použité konverzné metódy Matlab skriptov na spustiteľné súbory v jazyku C. Tieto pokusy neboli úspešné. Paralelne prebiehali aktivity implementácie MPC algoritmu na FPGA zariadenia, kde sa rovnako narážal na problem inverzie matíc a ďalších problémov, ktoré kvadratické programovanie prináša. Preto bol pre FPGA implementovaný explicitný - offline MPC regulátor. Tejto problematike sa venuje iná dizertačná práca. Predchádzajúce fakty z oblasti softvérovej architektúry a štúdium IoT architektúr priviedli na myšlienku CaaS a teda proces riadený pomocou regulátora, uloženého a výpočty vykonávajúceho na vzdialenom servery. Dôvody, prečo bol volený implicitný - online MPC regulátor sú popísané na konci kapitoly \ref{offmpc}. Stručné opakovanie toho je, že v práci sa kládol dôraz, aby sa matematický model mohol pravidelne ,,synchronizovať`` s výstupmi systému a teda sa mohol model meniť v prípade potreby aj v každom kroku. Implementovaná aplikácia služby regulátora je pripravená na to, aby sa matematický model menil aj v každom kroku. Služba na online identifikáciu pre experiment nebola pripravená, kvôli svojej komplexnosti. Najskôr je potrebné overiť základnú myšlienku CaaS a ak sa tá ukáže ako zmysluplná, tak sa v budúcnosti implementuje aj služba online identifikácie, ktorá má rovnaké miesto v prostredí s vysokými nárokmi na výpočtovým výkon a pamäť. Touto kombináciou by prediktívne riadenie bolo doplnené o adaptívnu zložku. Zhrnutie aktuálneho princípu CaaS. CaaS poskytuje rozhranie na zadefinovanie regulátora a rozhranie na spýtanie sa na hodnotu akčného zásahu. Na vstup pri požiadavke na akčný zásah sa zadáva nameraná hodnota výstupu, aby bola zabezpečená spätná väzba. Ďalej na vstup ide žiadaná hodnota, teda referenčný signál, ktorý ma výstupná veličina sledovať.  
 \subsubsection{Implementácia služby regulátora} \label{seccaas}
 Po vysvetlení myšlienky a jej motivácie nasleduje popis implementácie. Štúdiom architektúr a architektonických princípov bol zvolený typ servisnej aplikácie (service application) bez grafického rozhrania na základe mikroservice architektúry. Je to ľahko oddeliteľná funkcionalitu s potrebou škálovateľnosti, preto je microservice architektúra alebo aj SOA najvhodnejší kandidát. Na obrázku \ref{35_schema} v časti nad oblakom sú znázornené základne technológie, na ktorých je aplikácia postavená.
 \begin{itemize}
@@ -1927,7 +1927,7 @@ Následne namerané a posunuté dáta sa použijú na identifikáciu systému. T
 \caption{Prenosové funkcie pre bod 30.}
 \label{49_ident_resp}
 \end{subfigure}
-\caption{}
+\caption{Grafy identifikácie pre pracovný bod 30.}
 \end{figure}
 
 Na obrázkoch sú znázornené čiernou čiarou nameraný výstup, modrou farbou prechodová funkcia 2. rádu a zelenou farbou prechodová funkcia 3. rádu. Keďže funkcia 2. rádu presnejšie opisuje existujúci systém táto prechodová funkcia je vybratá na použitie do riadenia pomocou MPC, ktoré potrebuje matematický model. Táto prenosová funkcia má tvar:
@@ -1949,7 +1949,7 @@ Pred aplikovaním funkcie do procesu je  vyskúšaná v simulačnom nástroji op
 \caption{Výstup simulácie pre prvú prenosovú funkciu}
 \label{51_sim_out}
 \end{subfigure}
-\caption{}
+\caption{Simulácia prenosovej funkcie.}
 \end{figure}
 Dôležité informácie na týchto obrázkoch sú voľba periódy vzorkovania až na 15 sekúnd. Táto hodnota je zvolená kvôli tomu, aby sme týmto jedným softvérovýhm zariadením a riadiacim procesom nevyťažili  zdroje VeraLite brány natoľko, že by ostatné funkcie fungovali bez oneskorenia.  Ďalej sú tu nastavené obmedzenia procesu tak, aby korešpondovali s reálnymi možnosťami zariadení. Obmedzenie na vstup je od 0 po 100 v našom prípade \% a zmena môže byť či už z 0 na 100 alebo zo 100 na 0, takže obmedzenia na zmenu vstupu sú na hodnotách -100 a 100. Nakoniec obmedzenia na výstup sú od 0 po 170 luxov. Váhy prediktívneho regulátora nie je potrebné meniť, pretože výstupná veličina sleduje žiadanú hodnotu s požadovanou kvalitou riadenia.
  
@@ -1983,7 +1983,7 @@ Po tom ako je signál odfiltrovaný ident funkcionalita vráti kvalitnejšie mod
 \caption{Prenosová funkcia systému v pracovnom bode 80.}
 \label{53_step80}
 \end{subfigure}
-\caption{}
+\caption{Grafy identifikácie v pracovnom bode 80.}
 \end{figure}  
 Matematický tvar prenosovej funkcie v pracovnom bode 80 je:
 \begin{equation} \label{eq41}
@@ -2004,7 +2004,7 @@ Pre vypočítanú prenosovú funkciu sú vykonané simulácie, kde parametre a v
 \caption{Výstup simulácie pre druhú prenosovú funkciu}
 \label{54_sim80}
 \end{subfigure}
-\caption{}
+\caption{Simulácie pre druhý pracovný bod.}
 \end{figure}
 V tomto prípade treba upozorniť na obmedzene na vstup, ktoré je nastavené od 0 po 65\%. Ako je možné vidieť v strednom grafe obrázku \ref{54_sim80} táto hodnota nie je dosiahnutá ani pri maximálnej intenzite osvetlenia, ktorá bola v miestnosti dosiahnutá - 200 luxov. V tejto simulácii je pracovný rozsah stmievača od 0 po 65\%. Tým, že merané hodnoty boli pri identifikácii posúvané k nule, ale hlavne tým, že systém nie je lineárny a dolnú časť má na starosti iný regulátor k akčnému zásahu regulátora pre hornú oblasť je potrebné vždy pridať 100-65 = 35\%.
 Takto identifikované systémy a parametre sú aplikované do pripraveného IoT prostredia. 
@@ -2078,7 +2078,7 @@ Na obrázku \ref{42_set_lux} vidieť modrou farbou žiadanú hodnotu a červenou
 
 \subsection{Činnosti súvisiace s uvádzaním IoT systému do praxe}
 Táto kapitola sumarizuje praktické skúsenosti z návrhu, realizácie a udržiavania IoT systému. Zdôrazňuje výhody, ale aj výzvy, ktoré  IoT a teda vytváranie užšej väzby medzi IT (informačnými technológiami) a OT (operačnými technológiami) prináša. Kapitola porovnáva činnosti potrebné pre čisto softvérové systémy a činnosti potrebné pre IoT systémy. 
-\subsubsection{Návrh}
+\subsubsection{Návrh systému}
 Základný nástroj pri návrhu softvérových systémov je modelovací nástroj s podporou napr. UML. V ňom sa modelujú základné prípady použitia systému, komponenty systému, sekvenčné diagramy a diagramy aktivít. Táto časť je spoločná pre oba typy systémov. Pre oba typy systémov sa volia programovacie jazyky pre jednotlivé komponenty a spôsob komunikácie medzi nimi. Pri IoT systémoch navyše zohráva veľkú úlohu výber hardvérových komponentov a protokolu, pomocou ktorého hardvérové komponenty budú podávať informácie. V prípade, že neexistuje zariadenie, ktoré by spĺňalo požiadavky finálneho systému je potrebné riešiť návrh samotných hardvérových komponentov, čo je ďalšia rozsiahla tematika. Rovnako výber vhodného protokolu je neľahká úloha. Ako možno vidieť na obrázku \ref{31_iot} v časti komunikačná úroveň, na ktorom zďaleka nie sú vymenované všetky existujúce protokoly, sú rôzne typy protokolov na rozličné spôsoby použitia. Ich využitie výhody a nevýhody sa líšia a všetky sa v čase vyvíjajú. To v praxi znamená, že pri návrhu je potrebné mať prehľad o protokoloch a zmenách v čase. Ďalšia oblasť pri návrhu systému je jeho bezpečnosť. V softvérových systémoch ide len o kybernetickú bezpečnosť, zatiaľ čo pri IoT systémoch treba dbať aj na fyzickú bezpečnosť. Ohľadne kybernetickej bezpečnosti v IoT systéme treba povedať, že IoT systém vystavuje viacero miest potenciálnych útokov a systém je tak bezpečný ako jeho najzraniteľnejšie miesto. Ak sa pozrieme na IoT systém popisovaný v kapitole \ref{iotenv}, tak ide o systém, ktorý je v rámci lokálnej domácej siete a preto zabezpečenie nie je na úrovni systému podnikovej siete a určite nie na úrovni siete internet.  O tomto systéme môžeme povedať, že je tak bezpečný ako je zabezpečený prístup do domácej siete, ale zároveň aj zabezpečenie siete Z-Wave, ktorá je bezdrôtová a teda je možné ju jednoducho odpočúvať. Nevyhnutnosť v obidvoch prípadoch, Z-Wave aj Wifi, je šifrovanie komunikácie. Ďalší bod zabezpečenia je prípojka do internetu vo väčšine domácich sieti zohráva túto úlohu router. Tu je nevyhnutné zamedziť nežiadúcim prístupom z internetu do lokálnej siete. Na druhej strane treba povoliť prístup žiadúcim prístupom napríklad pre prípad ovládania na diaľku. V popisovanom systéme je tento bod vyriešený VPN server aplikáciou bežiacou na routeri, ktorá umožňuje klientom, prostredníctvom vydaných certifikačných kľúčov, sa naň pripojiť a po pripojení ovládať zariadenia lokálnej siete. Ďalší aspekt týkajúci sa bezpečnosti domácej siete je úroveň oprávnenia na rôzne typy úkonov pri správe. Tento nedostatok sa dá vytknúť zvolenému zariadeniu VeraLite, ktoré má iba dve úrovne Admin a Guest, kde admin môže všetko ovládať aj konfigurovať a Guest môže všetko ovládať. Chýba obmedzenie na ovládanie len určitej množiny zariadení, ktoré môže hosť ovládať. Časť o kybernetickej bezpečnosti uzatvárame tým, že je nevyhnutné mať znalosti o spôsoboch zabezpečenia IT, ktoré podľa možnosti aplikovať na OT. Téma fyzickej bezpečnosti je na druhej strane viac rozpracovaná v OT pri návrhu výrobných liniek a podobne. V IoT systémoch sa kybernetická bezpečnosť spája s tou fyzickou, keď napríklad hovoríme o zásuvkách, dverách, chladničkách ovládaných na diaľku, ak sa pozeráme len v merítku oblasti inteligentných budov. O to viac prepojenie narastá v oblasti systémov pre spojené autá, inteligentnú mestskú infraštruktúru a podobne. V tomto bode IoT systémy otvárajú viaceré legislatívne otázky týkajúce sa zodpovednosti za spôsobené škody akýmkoľvek IoT systémom. Právna oblasť bude ešte ovplyvňovať smer a návrhy IoT systémov.   
 Preto ak by sme definovali pozíciu architekta IoT systému, jeho znalosti a kompetencie sú v týchto doménach, či technológiách.
 \begin{itemize}
@@ -2092,7 +2092,7 @@ Preto ak by sme definovali pozíciu architekta IoT systému, jeho znalosti a kom
 \item právne aspekty domén nasadzovania IoT systémov
 \end{itemize}
 Tento zoznam nie je kompletný, ale snaží sa zaznamenať najdôležitejšie postrehy z praxe a poukázať na komplexitu, ktorú IoT systémy k pôvodnej softvérovej architektúre pridávajú.
-\subsubsection{Vývoj}
+\subsubsection{Vývoj systému}
 Vývoj softvéru a ako už bolo spomenuté aj hardvéru nepochybne patrí do činnosti uvádzania IoT systémov do praxe. Kapitola sa viac zameriava na softvér, pretože vývoj hardvéru v našom prípade nebol potrebný. Aktuálne pri vývoji IoT systému len zriedka postačí jeden programovací jazyk. Je to z dôvodu rôznych typov zariadení v jednom ekosystéme, s rôznymi nárokmi na výkon a na správanie. Ak začneme od najjednoduchších zariadení, tak firmvér zvyčajne býva písaný v jazyku C, samozrejme sú aj ďalšie alternatívy. V našom systéme firmvér nebolo potrebné písať, pretože väčšina zariadení bola zaobstaraná, aby fungovala so Z-Wave protokolom. Najbližšie k hardvéru je v práci poskytovanie údajov z fotorezistora, cez PCF8591 AD prevodník. Framework Node.js zohráva svojimi nízkymi nárokmi dôležitú úlohu pri vývoji aplikácii na zariadení typu Raspberry Pi. Zariadenie Raspberry Pi a jeho konkurenti zohrávaju tiež dôležitú úlohu pri zavádzaní IoT systémov. Sú to ideálne zariadenia na vytváranie prepojenia s IoT backendom. V našom prípade je ako rozhranie zvolené VeraLite zariadenie, ktoré však svojím výkonom a parametrami je s nimi porovnateľné. Vývoj na úrovni brán je stále s jazykmi s nízkymi nárokmi na výpočtový výkon, ale stále poskytujúce rýchlu odozvu. Ako už bolo spomenuté, tak vo VeraLite je použitý interpretovaný jazyk Lua, ktorého interpreter vykonáva funkcie knižníc napísaných v jazyku C. V oblasti inteligentných domov je často v bráne (agregátore) vizualizácia pre koncového používateľa. Rozhranie prístupné na VeraLite zariadení je optimalizované pre Z-Wave zariadenia s možnosťou integrácie ďalších typov. Vo svete existujú aj projekty typu openHAB \cite{IOT32}, ktoré sa tvária nezávisle od protokolu, ktorým sú zariadenia pripojené. Tieto nástroje služia ako softvér na vytvorenie centrálnej brány v lokálnej sieti a zastávaju funkciu správy a vizualizácie zariadení. Základne prvky automatizačných funkcií sú tiež podporované na tejto úrovni zariadení. Čo sa týka nezávislosti na protokole v konečnom dôsledku je potrebný plugin, aby určitý typ zariadení podporovaný bol. Keď si zoberieme napríklad Z-Wave protokol, tak na to, aby boli vo vizualizácii Z-Wave zariadenia zobrazené, musí byť naprogramovaný plugin, ktorý to umožní. Takže veľmi podobný prípad, ako integrovanie iných zariadení do VeraLite brány. Zhrnúť to môžeme tak, že mať vizualizáciu ešte v lokálnej sieti je takmer nevyhnutné, aby bolo možné riadiť dom aj v prípade výpadku internetu, ktorá vizualizácia sa zvolí je takmer jedno, na jednej strane vždy treba niečo integrovať. Ďalšia súčasť IoT systémov je IoT backend, ktorého vývoj sa najviac podobá existujúcim čisto softvérovým systémom. Na tejto úrovni sú dátové body natoľko abstraktné, že IoT backend nemusí rozoznávať, akým spôsobom boli získané. Faktor, ktorý sem vstupuje je množstvo dát. Systém nemusí byť IoT, aby spracovával veľa údajov, avšak už bolo spomenuté, že s IoT sa často spája pojem Big data. Toto je práve oblasť, ktorú treba zvládnuť na IoT backende a ktorá dáva IoT systému ďalšiu pridanú hodnotu. Okrem štandardných jazykov, platforiem a databáz, ktorými sa aplikácie programujú, je potrebné sledovať vývoj nových jazykov, platforiem, databáz. V práci je použitý aj klasický prístup na aplikovanie moderných metód riadenia, kde je zvolený jazyk Java, ako jeden z najstabilnejších a najpoužívanejších. Ako úložisko je použitá MongoDB databáza, ktorá je menej konvenčná, ale trendy ukazujú, že čo chvíľa sa z nej stane konvenčná  databáza. Oproti tradičným relačným databázam typu MySQL sa líši tým, že nemá tabuľky, ale kolekcie dokumentov a nemá riadky a stĺpce, ale dokumenty a atribúty dokumentu a štruktúra atribútov nie je definovaná. Ďalej je v práci vyskúšaný jeden z moderných prístupov spracovania dát. Základné súčasti, ktorými sa Big Data zaoberá sú spracovanie, uloženie, vizualizovanie, analyzovanie a vyhodnocovanie veľkého objemu dát. Oproti v práci spomínaným komerčným platformám MS AZURE IOT HUB, AMAZON AWS IOT existujú aj open source platformy na prácu s dátami. V čase písania práce perspektívne vyzerajúce sú dve sady nástrojov. Jedna z nich je ELK \cite{IOT34} sada a druhá TICK \cite{IOT33} sada. Prvá je prezentovaná ako výborný nástroj na sledovanie logov, samozrejme využitie nie je limitované. Druhá je prezentovaná ako výborný nástroj na prácu s časovými radmi opäť využitie nie je limitované. Druhá menovaná je v práci vyskúšaná avšak len 3 nástroje zo štyroch a ich výstup je možné vidieť na obrázkoch \ref{55_chladnicka}, \ref{56_senzory}, \ref{57_svetla} a \ref{58_dvere} . Štvrtý nástroj slúžiaci na analýzu dát zasahuje do oblasti ,,data science``, ktorá sa zaoberá machine learning, deep learning a štatistickými modelmi, čo je ďalšia rozsiahla téma. Základné vyhodnotenia anomálnych, rizikových stavov v našom systéme bežia už vo VeraLite bráne, ktorá základnú logiku podporuje. Avšak logika vyplývajúca z dlhodobo nazbieraných dát v práci vyhodnocovaná nie je. Z vizualizácii je možné potvrdiť fakty, ktoré sa pomerne ľahko dajú predpokladať.
 
 \begin{figure}[!htbp]
@@ -2132,7 +2132,7 @@ Pole pôsobenia vývojára IoT systému je tak ako v prípade architekta IoT sys
 \item Programovanie IoT backend - zahŕňajúce nové rýchlo rozvíjajúce sa technológie na spracovanie a analýzu dát veľkých objemov, rýchlosti a variability.
 \end{itemize}
 
-\subsubsection{Prevádzka}
+\subsubsection{Prevádzka systému}
 Posledná oblasť činností je údržba IoT systému. Čisto softvérové systémy spravujú administrátori, pre ktorých existujú nástroje, ktoré sledujú stav serverov a služieb bežiacich na serveroch. Rovnaká požiadavka je potrebná aj pre IoT systém, ktorý ale má viacero úrovni a pod kontrolou je potrebné mať všetky úrovne. Starosť o IoT backend a o IoT bránu sa nelíšia. Pre účely monitorovania systému je v práci použitý nástroj Nagios \cite{IOT35}. Tento nástroj umožňuje čiastočne konfiguračne a čiastočne implementačne doplniť sledovanie stavu rôznych zariadení. Pre klasické služby má pripravenú sadu použiteľnej konfigurácie. Na obrázku \ref{59_nagios} je znázornené grafické rozhranie, ktoré ukazuje stav hlavných zariadení a služieb bežiacich na nich.
 \begin{figure}[!htbp]
 \centering
