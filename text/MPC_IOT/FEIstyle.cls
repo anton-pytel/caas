@@ -44,6 +44,7 @@
 %\FEIconclusion{subor}
 %\FEIresume{subor}
 %\FEIbibliography{subor}{subor}
+%\FEIpublic{subor}
 %\FEIlistOfAppendix
 %\FEIappendix{nazov}{subor}
 %\FEIpdfInfo
@@ -181,7 +182,7 @@
 \def\FEIstudyProgrammeEn#1{\def\@studijnyProgramEn{#1}}
 \newcommand{\printStudijnyProgramEn}{\@studijnyProgramEn}
 
-\def\@cisloStudijnehoOdboru{FEI-100861-35740}
+\def\@cisloStudijnehoOdboru{5.2.16.}
 \def\FEIstudyFieldNumber#1{\def\@cisloStudijnehoOdboru{#1}}
 \newcommand{\printCisloStudijnehoOdboru}{\@cisloStudijnehoOdboru}
 
@@ -312,10 +313,9 @@
 			   \def\@skolaNazovPrace{\printNazov}
 			   \def\@skolaTypPrace{\typPrace}
 			   \def\@tempStudProgr{\v{S}tudijn\a'y program:}
-			   \def\@tempCisloStud{\v{C}\a'islo \v{s}tudijn\a'eho odboru:}
-			   \def\@tempNazovStud{N\a'azov \v{s}tudijn\a'eho odboru:}
+			   \def\@tempNazovStud{\v{S}tudijn\a'y odbor:}
 			   \def\@tempSkolPracov{\v{S}koliace pracovisko:}
-			   \def\@tempVedPrace{Ved\a'uci z\a'avere\v{c}nej pr\a'ace:}
+			   \def\@tempVedPrace{\v{S}kolite\v{l}:}
 			   \def\@tempKonzultanta{Konzultant:}}
 		 {1}{\def\@skolaTemp{\printSkolaEn}
 				\def\@skolaFakulta{\printFakultaEn}
@@ -326,7 +326,6 @@
 				\def\@skolaNazovPrace{\printNazovEn}
 			   \def\@skolaTypPrace{\typPraceEn}
 			   \def\@tempStudProgr{Study Programme:}
-			   \def\@tempCisloStud{Field Number:}
 			   \def\@tempNazovStud{Study Field:}
 			   \def\@tempSkolPracov{Training Workplace:}
 			   \def\@tempVedPrace{Supervisor:}  
@@ -347,7 +346,6 @@
 	\begin{tabbing}	
 	\hspace*{5cm}\= \kill
 	\@tempStudProgr \> \@skolaStudPr \\
-	\@tempCisloStud \> \printCisloStudijnehoOdboru \\
 	\@tempNazovStud \> \@skolaStudPrCisl \\
 	\@tempSkolPracov \> \@skolaSkolPrac \\
 	\@tempVedPrace \> \printVeduciZaverecnejPrace \\
@@ -614,6 +612,19 @@ na z\'{a}klade poznatkov z\'{i}skan\'{y}ch po\v{c}as \v{s}t\'{u}dia a inform\'{a
 \IfEqCase*{\FEIenglish}{
    		 {0}{\def\@zoznamZa{Z\'{a}ver}}
 		 {1}{\def\@zoznamZa{Conclusion}}
+		  }[]
+	\cleardoublepage
+	\phantomsection	
+	\addcontentsline{toc}{section}{\@zoznamZa}
+	\section*{ \@zoznamZa}
+	 \noindent \noindent \input{#1}
+}
+
+\newcommand\FEIpublic[1]{	
+	\newpage
+\IfEqCase*{\FEIenglish}{
+   		 {0}{\def\@zoznamZa{Publika\v{c}n\'{a} \v{c}innos\v{t} autora}}
+		 {1}{\def\@zoznamZa{Bibliography of Author}}
 		  }[]
 	\cleardoublepage
 	\phantomsection	
