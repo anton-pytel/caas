@@ -60,7 +60,7 @@
 						\def\typPraceTempII{diplomovej pr\'{a}ce}}
 \DeclareOption{drp}{\def\typPraceSkr{dr}
 						\def\typPrace{Dizerta\v{c}n\a'a pr\a'aca}		
-						\def\typPraceTemp{dizerta\v{c}\'{u} pr\'{a}cu}
+						\def\typPraceTemp{dizerta\v{c}n\'{u} pr\'{a}cu}
 						\def\typPraceEn{Dissertation Thesis}	
 						\def\typPraceTempII{dizerta\v{c}nej pr\'{a}ce}}						
 \DeclareOption{bp}{\def\typPraceSkr{b}
